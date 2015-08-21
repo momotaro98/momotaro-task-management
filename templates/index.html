@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="todo">
+    <h2>Make the class report</h2>
+</div>
+<div id="timer">
+    <h2>
+        残り <span id="time"></span>  秒
+    </h2>
+</div>
+<div id="startButton">
+    START
+</div>
+<script>
+    {% if set_time %}
+    (function() {
+        'use strict';
+        var set_time = {{ set_time }};
+        var timerId;
+        var startTime;
+
+        var startButton = document.getElementById('startButton');
+        var r_time = document.getElementById('time');
+
+        r_time.innerHTML = set_time;
+
+        startButton.addEventListener('click', function() {
+            startTime = Date.now();
+            if (timerId !== null) clearTimeout(timerId);
+            runTimer();
+        });
+        startButton.addEventListener('mousedown', function() {
+            this.className = 'pushed';
+        });
+        startButton.addEventListener('mouseup', function() {
+            this.className = '';
+        });
+        function runTimer() {
+            var passed_time = ((Date.now() - startTime) / 1000).toFixed(0);
+            var remained_time = set_time - passed_time;
+            if (remained_time >= 0) r_time.innerHTML = remained_time;
+            else clearTimeout(timerId);
+            timerId = setTimeout(function() {
+                runTimer();
+            }, 10);
+        }
+    })();
+    {% endif %}
+</script>
+{% endblock %}
