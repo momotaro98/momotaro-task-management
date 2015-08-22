@@ -1,11 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <div id="todo">
-    <h2>Make the class report</h2>
+    <h2>{{ todo_name }}</h2>
 </div>
 <div id="timer">
     <h2>
-        残り <span id="time"></span>  秒
+        残り
+        <span id="hour":></span> 時間
+        <span id="minute":></span> 分
+        <span id="second"></span>  秒
     </h2>
 </div>
 <div id="startButton">
@@ -33,8 +36,13 @@
         var startButton = document.getElementById('startButton');
         var stopButton = document.getElementById('stopButton');
         var resetButton = document.getElementById('resetButton');
-        var r_time = document.getElementById('time');
-        r_time.innerHTML = set_time;
+
+        var hour_show = document.getElementById('hour');
+        var minute_show = document.getElementById('minute');
+        var second_show = document.getElementById('second');
+        hour_show.innerHTML = Math.floor(set_time / 3600);
+        minute_show.innerHTML = Math.floor((set_time / 60) % 60);
+        second_show.innerHTML = set_time % 60;
 
         // スタートボタンを押したとき
         startButton.addEventListener('click', function() {
@@ -70,7 +78,9 @@
             if (stop_flag === 1) {
                 if (timerId !== null) clearTimeout(timerId);
                 current_time = set_time;
-                r_time.innerHTML = set_time;
+                hour_show.innerHTML = Math.floor(set_time / 3600);
+                minute_show.innerHTML = Math.floor((set_time / 60) % 60);
+                second_show.innerHTML = set_time % 60;
             }
         });
         resetButton.addEventListener('mousedown', function() {
@@ -83,7 +93,11 @@
         function runTimer() {
             var passed_time = ((Date.now() - startTime) / 1000).toFixed(0);
             remained_time = current_time - passed_time;
-            if (remained_time >= 0) r_time.innerHTML = remained_time;
+            if (remained_time >= 0) {
+                hour_show.innerHTML = Math.floor(remained_time / 3600);
+                minute_show.innerHTML = Math.floor((remained_time / 60) % 60);
+                second_show.innerHTML = remained_time % 60;
+            }
             else clearTimeout(timerId);
             timerId = setTimeout(function() {
                 runTimer();

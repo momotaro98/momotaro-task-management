@@ -4,17 +4,19 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/todo', methods=['POST', 'GET'])
 def index():
-    todo_name = "Make report of physics sciety's class"
-    hour = 0
-    minute = 30
-    second = 15
-    set_time = 3600 * hour + 60 * minute + second
-    return render_template('index.html',
-                    todo_name=todo_name,
-                      set_time=set_time)
-@app.route('/setting')
+    if request.method == 'POST':
+        todo_name = request.form["task_title"]
+        hour = request.form["hour"]
+        minute = request.form["minute"]
+        second = request.form["second"]
+        set_time = 3600 * int(hour) + 60 * int(minute) + int(second)
+        return render_template('index.html',
+                        todo_name=todo_name,
+                          set_time=set_time)
+    return render_template('setting.html')
+@app.route('/')
 def setting():
     return render_template('setting.html')
 
