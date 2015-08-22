@@ -7,7 +7,10 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     todo_name = "Make report of physics sciety's class"
-    set_time = 1800
+    hour = 0
+    minute = 30
+    second = 15
+    set_time = 3600 * hour + 60 * minute + second
     return render_template('index.html',
                     todo_name=todo_name,
                       set_time=set_time)

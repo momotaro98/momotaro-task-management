@@ -11,23 +11,39 @@
 <div id="startButton">
     START
 </div>
+<div id="stopButton">
+    STOP
+</div>
+<div id="resetButton">
+    RESET
+</div>
 <script>
     {% if set_time %}
     (function() {
         'use strict';
-        var set_time = {{ set_time }};
+
         var timerId;
         var startTime;
+        var remained_time;
+        var set_time = {{ set_time }};
+        var current_time = set_time;
+
+        var stop_flag = 1;
 
         var startButton = document.getElementById('startButton');
+        var stopButton = document.getElementById('stopButton');
+        var resetButton = document.getElementById('resetButton');
         var r_time = document.getElementById('time');
-
         r_time.innerHTML = set_time;
 
+        // スタートボタンを押したとき
         startButton.addEventListener('click', function() {
-            startTime = Date.now();
-            if (timerId !== null) clearTimeout(timerId);
-            runTimer();
+            if (stop_flag === 1) {
+                stop_flag = 0;
+                startTime = Date.now();
+                if (timerId !== null) clearTimeout(timerId);
+                runTimer();
+            }
         });
         startButton.addEventListener('mousedown', function() {
             this.className = 'pushed';
@@ -35,9 +51,38 @@
         startButton.addEventListener('mouseup', function() {
             this.className = '';
         });
+
+        // ストップボタンを押したとき
+        stopButton.addEventListener('click', function() {
+            stop_flag = 1;
+            if (timerId !== null) clearTimeout(timerId);
+            current_time = remained_time;
+        });
+        stopButton.addEventListener('mousedown', function() {
+            this.className = 'pushed';
+        });
+        stopButton.addEventListener('mouseup', function() {
+            this.className = '';
+        });
+
+        // リセットボタンを押したとき
+        resetButton.addEventListener('click', function() {
+            if (stop_flag === 1) {
+                if (timerId !== null) clearTimeout(timerId);
+                current_time = set_time;
+                r_time.innerHTML = set_time;
+            }
+        });
+        resetButton.addEventListener('mousedown', function() {
+            this.className = 'pushed';
+        });
+        resetButton.addEventListener('mouseup', function() {
+            this.className = '';
+        });
+
         function runTimer() {
             var passed_time = ((Date.now() - startTime) / 1000).toFixed(0);
-            var remained_time = set_time - passed_time;
+            remained_time = current_time - passed_time;
             if (remained_time >= 0) r_time.innerHTML = remained_time;
             else clearTimeout(timerId);
             timerId = setTimeout(function() {

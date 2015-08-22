@@ -44,3 +44,39 @@ h2 {
         margin-top: 32px;
         box-shadow: 0 2px 0 #e91b0c;
     }
+#stopButton {
+        margin: 30px auto;
+        width: 180px;
+        border-radius: 5px;
+        box-shadow: 0 4px 0 #e91b0c;
+        background: #f44336;
+        color: #fff;
+        cursor: pointer;
+        padding: 7px;
+        text-align: center;
+    }
+    #stopButton:hover {
+        opacity: 0.8;
+    }
+    #stopButton.pushed {
+        margin-top: 32px;
+        box-shadow: 0 2px 0 #e91b0c;
+    }
+#resetButton {
+        margin: 30px auto;
+        width: 180px;
+        border-radius: 5px;
+        box-shadow: 0 4px 0 #e91b0c;
+        background: #f44336;
+        color: #fff;
+        cursor: pointer;
+        padding: 7px;
+        text-align: center;
+    }
+    #resetButton:hover {
+        opacity: 0.8;
+    }
+    #resetButton.pushed {
+        margin-top: 32px;
+        box-shadow: 0 2px 0 #e91b0c;
+    }
