@@ -1,2 +1,4 @@
 .webassets-cache
 .DS_Store
+*.pyc
+venv
