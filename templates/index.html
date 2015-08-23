@@ -3,6 +3,13 @@
 <div id="todo">
     <h2>{{ todo_name }}</h2>
 </div>
+<div id="set_time">
+    <h2>
+        設定時間： 
+        {{ set_time // 3600}}時間 
+        {{ (set_time // 60) % 60}}分 
+    </h2>
+</div>
 <div id="timer">
     <h2>
         残り

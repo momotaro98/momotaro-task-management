@@ -15,6 +15,13 @@ body {
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
 }
+#set_time {
+    position: relative;
+    top: -10px;
+    background-color: #3c4543;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
 h2 {
     font-family: Verdana;
     font-weight: bold;
@@ -80,6 +87,7 @@ h2 {
 h2 select {
     font-size: 50px;
 }
-h2 input {
+#title_input {
+    width: 500px;
     font-size: 30px;
 }

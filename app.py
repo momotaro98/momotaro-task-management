@@ -10,8 +10,7 @@ def index():
         todo_name = request.form["task_title"]
         hour = request.form["hour"]
         minute = request.form["minute"]
-        second = request.form["second"]
-        set_time = 3600 * int(hour) + 60 * int(minute) + int(second)
+        set_time = 3600 * int(hour) + 60 * int(minute)
         return render_template('index.html',
                         todo_name=todo_name,
                           set_time=set_time)
