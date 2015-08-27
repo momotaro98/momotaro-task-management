@@ -12,14 +12,19 @@
         {% if (set_time // 60) % 60 > 0 %}
             {{ (set_time // 60) % 60}}&nbsp;分
         {% endif %}
+        <br>
+        <span id="start_time"></span>
     </h2>
 </div>
 <div id="timer">
     <h2>
         残り
-        <span id="hour":></span>
-        <span id="minute":></span>
-        <span id="second"></span>
+        <span id="hour"></span>
+        <span id="minute"></span>
+        <span id="second"></span><br>
+        <span id="ohour" color="red"></span>
+        <span id="ominute" color="red"></span>
+        <span id="osecond" color="red"></span>
     </h2>
 </div>
 <div id="startButton">
@@ -42,15 +47,21 @@
         var set_time = {{ set_time }};
         var current_time = set_time;
 
-        var stop_flag = 1;
+        var stop_flag = 1; // ストップボタンを押しているかのフラグ
+        var num_SB_pushed = 0; // スタートボタンを押した回数
 
         var startButton = document.getElementById('startButton');
         var stopButton = document.getElementById('stopButton');
         var resetButton = document.getElementById('resetButton');
 
+        var start_time_show = document.getElementById('start_time');
         var hour_show = document.getElementById('hour');
         var minute_show = document.getElementById('minute');
         var second_show = document.getElementById('second');
+        var ohour_show = document.getElementById('ohour');
+        var ominute_show = document.getElementById('ominute');
+        var osecond_show = document.getElementById('osecond');
+
         if (set_time >= 3600) {
             hour_show.innerHTML = Math.floor(set_time / 3600) + " 時間 ";
         }
@@ -61,6 +72,13 @@
 
         // スタートボタンを押したとき
         startButton.addEventListener('click', function() {
+            num_SB_pushed++;
+            if (num_SB_pushed === 1) {
+                var DD = new Date();
+                var Hours = DD.getHours();
+                var Minutes = DD.getMinutes();
+                start_time_show.innerHTML = "開始時刻 " + Hours + " 時 " + Minutes + " 分";
+            }
             if (stop_flag === 1) {
                 stop_flag = 0;
                 startTime = Date.now();
@@ -100,6 +118,10 @@
                     minute_show.innerHTML = Math.floor((set_time / 60) % 60) + " 分 ";
                 }
                 second_show.innerHTML = set_time % 60 + " 秒";
+                // 超過時間をリセット
+                ohour_show.innerHTML = "";
+                ominute_show.innerHTML = "";
+                osecond_show.innerHTML = "";
             }
         });
         resetButton.addEventListener('mousedown', function() {
@@ -109,10 +131,11 @@
             this.className = '';
         });
 
+        // タイマー処理関数
         function runTimer() {
             var passed_time = ((Date.now() - startTime) / 1000).toFixed(0);
             remained_time = current_time - passed_time;
-            if (remained_time >= 0) {
+            if (remained_time > 0) {
                 if (remained_time >= 3600) {
                     hour_show.innerHTML = Math.floor(remained_time / 3600) + " 時間 ";
                 }
@@ -126,6 +149,23 @@
                     minute_show.innerHTML = "";
                 }
                 second_show.innerHTML = remained_time % 60 + " 秒";
+            }
+            // 設定時間より超過した時
+            else if (remained_time <= 0) {
+                second_show.innerHTML = 0 + " 秒";
+                if (remained_time <= -3600) {
+                    ohour_show.innerHTML = Math.floor(-1 * remained_time / 3600) + " 時間 ";
+                }
+                else {
+                    ohour_show.innerHTML = "";
+                }
+                if (remained_time <= -60) {
+                    ominute_show.innerHTML = Math.floor((-1 * remained_time / 60) % 60) + " 分 ";
+                }
+                else {
+                    ominute_show.innerHTML = "";
+                }
+                osecond_show.innerHTML = -1 * remained_time % 60 + " 秒 超過中";
             }
             else clearTimeout(timerId);
             timerId = setTimeout(function() {
