@@ -3,7 +3,7 @@
 <div id="todo">
     <h2>{{ todo_name }}</h2>
 </div>
-<div id="set_time">
+<div class="element" id="set_time">
     <h2>
         設定時間&nbsp;
         {% if set_time >= 3600 %}
@@ -12,12 +12,25 @@
         {% if (set_time // 60) % 60 > 0 %}
             {{ (set_time // 60) % 60}}&nbsp;分
         {% endif %}
-        <br>
+    </h2>
+</div>
+<div class="element">
+    <h2>
         <span id="start_time"></span>
     </h2>
 </div>
-<div id="timer">
+<div class="element">
     <h2>
+        <span id="end_time"></span>
+    </h2>
+</div>
+<div class="element" id="timer">
+    <h2>
+        <span id="phour"></span>
+        <span id="pminute"></span>
+        <span id="psecond"></span>
+        経過
+        <br>
         残り
         <span id="hour"></span>
         <span id="minute"></span>
@@ -44,8 +57,10 @@
         var timerId;
         var startTime;
         var remained_time;
+        var serial_passed_time;
         var set_time = {{ set_time }};
         var current_time = set_time;
+        var pcurrent_time = 0;
 
         var stop_flag = 1; // ストップボタンを押しているかのフラグ
         var num_SB_pushed = 0; // スタートボタンを押した回数
@@ -55,6 +70,10 @@
         var resetButton = document.getElementById('resetButton');
 
         var start_time_show = document.getElementById('start_time');
+        var end_time_show = document.getElementById('end_time');
+        var phour_show = document.getElementById('phour');
+        var pminute_show = document.getElementById('pminute');
+        var psecond_show = document.getElementById('psecond');
         var hour_show = document.getElementById('hour');
         var minute_show = document.getElementById('minute');
         var second_show = document.getElementById('second');
@@ -62,6 +81,12 @@
         var ominute_show = document.getElementById('ominute');
         var osecond_show = document.getElementById('osecond');
 
+        // 経過時間初期
+        phour_show.innerHTML = "";
+        pminute_show.innerHTML = "";
+        psecond_show.innerHTML = 0 + " 秒";
+
+        // 残り時間初期
         if (set_time >= 3600) {
             hour_show.innerHTML = Math.floor(set_time / 3600) + " 時間 ";
         }
@@ -77,7 +102,16 @@
                 var DD = new Date();
                 var Hours = DD.getHours();
                 var Minutes = DD.getMinutes();
-                start_time_show.innerHTML = "開始時刻 " + Hours + " 時 " + Minutes + " 分";
+                var Start_in_Sec = Hours * 3600 + Minutes * 60;
+                var End_in_Sec = Start_in_Sec + set_time;
+                var End_Hours = Math.floor(End_in_Sec / 3600);
+                var End_Minutes= Math.floor((End_in_Sec / 60) % 60);
+                if (Hours < 10) { Hours = "0" + Hours;}
+                if (Minutes < 10) { Minutes = "0" + Minutes;}
+                if (End_Hours < 10) { End_Hours = "0" + End_Hours;}
+                if (End_Minutes < 10) { End_Minutes = "0" + End_Minutes;}
+                start_time_show.innerHTML = "開始時刻  " + Hours + " : " + Minutes;
+                end_time_show.innerHTML = "終了予定時刻  " + End_Hours + " : " + End_Minutes;
             }
             if (stop_flag === 1) {
                 stop_flag = 0;
@@ -93,12 +127,14 @@
             this.className = '';
         });
 
-        // ストップボタンを押したとき
+        // ストップボタンをタップしたとき
         stopButton.addEventListener('click', function() {
             stop_flag = 1;
             if (timerId !== null) clearTimeout(timerId);
             current_time = remained_time;
+            pcurrent_time = serial_passed_time;
         });
+
         stopButton.addEventListener('mousedown', function() {
             this.className = 'pushed';
         });
@@ -111,6 +147,12 @@
             if (stop_flag === 1) {
                 if (timerId !== null) clearTimeout(timerId);
                 current_time = set_time;
+                pcurrent_time = 0;
+                // 経過時間
+                phour_show.innerHTML = "";
+                pminute_show.innerHTML = "";
+                psecond_show.innerHTML = 0 + " 秒";
+                // 残り時間
                 if (set_time >= 3600) {
                     hour_show.innerHTML = Math.floor(set_time / 3600) + " 時間 ";
                 }
@@ -134,6 +176,25 @@
         // タイマー処理関数
         function runTimer() {
             var passed_time = ((Date.now() - startTime) / 1000).toFixed(0);
+
+            // 経過時間
+            // ↓マイナスになってしまうが、＋演算子ではうまくいかないのでこれで対応
+            serial_passed_time = pcurrent_time - passed_time;
+            if (serial_passed_time <= -3600) {
+                phour_show.innerHTML = Math.floor(-1 * serial_passed_time / 3600) + " 時間 ";
+            }
+            else {
+                phour_show.innerHTML = "";
+            }
+            if (serial_passed_time <= -60) {
+                pminute_show.innerHTML = Math.floor((-1 * serial_passed_time / 60) % 60) + " 分 ";
+            }
+            else {
+                pminute_show.innerHTML = "";
+            }
+            psecond_show.innerHTML = -1 * serial_passed_time % 60 + " 秒";
+
+            // 残り時間
             remained_time = current_time - passed_time;
             if (remained_time > 0) {
                 if (remained_time >= 3600) {
