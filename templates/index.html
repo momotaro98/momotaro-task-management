@@ -28,6 +28,7 @@
 </div>
 <div class="element" id="timer">
     <h2>
+        開始から
         <span id="phour"></span>
         <span id="pminute"></span>
         <span id="psecond"></span>
@@ -36,40 +37,38 @@
         残り
         <span id="hour"></span>
         <span id="minute"></span>
-        <span id="second"></span><br>
+        <span id="second"></span>
+        <br>
         <span id="ohour" color="red"></span>
         <span id="ominute" color="red"></span>
         <span id="osecond" color="red"></span>
     </h2>
 </div>
-<div id="startButton">
-    START
+<div class="element">
+    <h2>
+        <span id="now_status"></span>
+    </h2>
 </div>
-<div id="stopButton">
+<div class="Button" id="startButton">
+</div>
+<div class="Button" id="stopButton">
     STOP
 </div>
-<div id="resetButton">
+<div class="Button" id="resetButton">
     RESET
+</div>
+<div class="Button" id="doneButton">
+    DONE
 </div>
 <script>
     {% if set_time %}
     (function() {
         'use strict';
 
-        var timerId;
-        var startTime;
-        var remained_time;
-        var serial_passed_time;
-        var set_time = {{ set_time }};
-        var current_time = set_time;
-        var pcurrent_time = 0;
-
-        var stop_flag = 1; // ストップボタンを押しているかのフラグ
-        var num_SB_pushed = 0; // スタートボタンを押した回数
-
         var startButton = document.getElementById('startButton');
         var stopButton = document.getElementById('stopButton');
         var resetButton = document.getElementById('resetButton');
+        var doneButton = document.getElementById('doneButton');
 
         var start_time_show = document.getElementById('start_time');
         var end_time_show = document.getElementById('end_time');
@@ -82,11 +81,24 @@
         var ohour_show = document.getElementById('ohour');
         var ominute_show = document.getElementById('ominute');
         var osecond_show = document.getElementById('osecond');
+        var now_status_show = document.getElementById('now_status');
 
-        // 経過時間初期
+        var timerId;
+        var startTime;
+        var remained_time;
+        var serial_passed_time;
+        var set_time = {{ set_time }};
+
+        var current_time = set_time;
+        var pcurrent_time = 0;
+        var stop_flag = 1; // ストップボタンを押しているかのフラグ
+        var num_SB_pushed = 0; // スタートボタンを押した回数
+        // 経過時間初期時
         phour_show.innerHTML = "";
         pminute_show.innerHTML = "";
         psecond_show.innerHTML = 0 + " 秒";
+
+        now_status_show.innerHTML = "Let's Start!";
 
         // 残り時間初期
         if (set_time >= 3600) {
@@ -97,10 +109,24 @@
         }
         second_show.innerHTML = set_time % 60 + " 秒";
 
+        // スタートボタンを押す前はスタートボタンのみ表示
+        if (num_SB_pushed === 0) {
+
+            startButton.innerHTML = "START!";
+
+            startButton.style.display="block";
+            stopButton.style.display="none";
+            resetButton.style.display="none";
+            doneButton.style.display="none";
+        }
+
         // スタートボタンを押したとき
         startButton.addEventListener('click', function() {
             num_SB_pushed++;
             if (num_SB_pushed === 1) {
+
+                startButton.innerHTML = "RESTART";
+
                 var DD = new Date();
                 var Hours = DD.getHours();
                 var Minutes = DD.getMinutes();
@@ -114,6 +140,14 @@
                 end_time_show.innerHTML = "  " + End_Hours + " : " + End_Minutes;
             }
             if (stop_flag === 1) {
+
+                startButton.style.display="none";
+                stopButton.style.display="block";
+                resetButton.style.display="none";
+                doneButton.style.display="none";
+
+                now_status_show.innerHTML = "You are working. Fight!";
+
                 stop_flag = 0;
                 startTime = Date.now();
                 if (timerId !== null) clearTimeout(timerId);
@@ -129,6 +163,14 @@
 
         // ストップボタンをタップしたとき
         stopButton.addEventListener('click', function() {
+
+            now_status_show.innerHTML = "Stopping Now";
+
+            startButton.style.display="block";
+            stopButton.style.display="none";
+            resetButton.style.display="block";
+            doneButton.style.display="block";
+
             stop_flag = 1;
             if (timerId !== null) clearTimeout(timerId);
             current_time = remained_time;
@@ -145,14 +187,32 @@
         // リセットボタンを押したとき
         resetButton.addEventListener('click', function() {
             if (stop_flag === 1) {
+
+                startButton.innerHTML = "START!";
+
+                startButton.style.display="block";
+                stopButton.style.display="none";
+                resetButton.style.display="none";
+                doneButton.style.display="none";
+
                 if (timerId !== null) clearTimeout(timerId);
+
+                // 各変数を初期化
                 current_time = set_time;
                 pcurrent_time = 0;
-                // 経過時間
+                stop_flag = 1;
+                num_SB_pushed = 0;
+
+                // 開始時刻と終了予定時刻を消す
+                start_time_show.innerHTML = "";
+                end_time_show.innerHTML = "";
+
+                // 経過時間をリセット
                 phour_show.innerHTML = "";
                 pminute_show.innerHTML = "";
                 psecond_show.innerHTML = 0 + " 秒";
-                // 残り時間
+
+                // 残り時間をリセット
                 if (set_time >= 3600) {
                     hour_show.innerHTML = Math.floor(set_time / 3600) + " 時間 ";
                 }
@@ -160,6 +220,10 @@
                     minute_show.innerHTML = Math.floor((set_time / 60) % 60) + " 分 ";
                 }
                 second_show.innerHTML = set_time % 60 + " 秒";
+
+                // 状態をリセット
+                now_status_show.innerHTML = "Let's Start!";
+
                 // 超過時間をリセット
                 ohour_show.innerHTML = "";
                 ominute_show.innerHTML = "";
@@ -215,10 +279,10 @@
             else if (remained_time <= 0) {
                 second_show.innerHTML = 0 + " 秒";
                 if (remained_time <= -3600) {
-                    ohour_show.innerHTML = Math.floor(-1 * remained_time / 3600) + " 時間 ";
+                    ohour_show.innerHTML = "設定時間から " + Math.floor(-1 * remained_time / 3600) + " 時間 ";
                 }
                 else {
-                    ohour_show.innerHTML = "";
+                    ohour_show.innerHTML = "設定時間から ";
                 }
                 if (remained_time <= -60) {
                     ominute_show.innerHTML = Math.floor((-1 * remained_time / 60) % 60) + " 分 ";
