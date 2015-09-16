@@ -16,11 +16,13 @@
 </div>
 <div class="element">
     <h2>
+        開始時刻
         <span id="start_time"></span>
     </h2>
 </div>
 <div class="element">
     <h2>
+        終了予定時刻
         <span id="end_time"></span>
     </h2>
 </div>
@@ -108,8 +110,8 @@
                 var End_Minutes= Math.floor((End_in_Sec / 60) % 60);
                 if (Minutes < 10) { Minutes = "0" + Minutes;}
                 if (End_Minutes < 10) { End_Minutes = "0" + End_Minutes;}
-                start_time_show.innerHTML = "開始時刻  " + Hours + " : " + Minutes;
-                end_time_show.innerHTML = "終了予定時刻  " + End_Hours + " : " + End_Minutes;
+                start_time_show.innerHTML = "  " + Hours + " : " + Minutes;
+                end_time_show.innerHTML = "  " + End_Hours + " : " + End_Minutes;
             }
             if (stop_flag === 1) {
                 stop_flag = 0;
