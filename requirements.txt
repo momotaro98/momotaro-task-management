@@ -1,6 +1,5 @@
 dominate==2.1.12
 Flask==0.10.1
-Flask-Bootstrap==3.3.5.6
 Flask-Script==2.0.5
 gunicorn==19.3.0
 itsdangerous==0.24
