@@ -57,9 +57,6 @@
 <div class="Button" id="resetButton">
     RESET
 </div>
-<div class="Button" id="doneButton">
-    DONE
-</div>
 <script>
     {% if set_time %}
     (function() {
@@ -68,7 +65,6 @@
         var startButton = document.getElementById('startButton');
         var stopButton = document.getElementById('stopButton');
         var resetButton = document.getElementById('resetButton');
-        var doneButton = document.getElementById('doneButton');
 
         var start_time_show = document.getElementById('start_time');
         var end_time_show = document.getElementById('end_time');
@@ -117,7 +113,6 @@
             startButton.style.display="block";
             stopButton.style.display="none";
             resetButton.style.display="none";
-            doneButton.style.display="none";
         }
 
         // スタートボタンを押したとき
@@ -144,7 +139,6 @@
                 startButton.style.display="none";
                 stopButton.style.display="block";
                 resetButton.style.display="none";
-                doneButton.style.display="none";
 
                 now_status_show.innerHTML = "You are working. Fight!";
 
@@ -169,7 +163,6 @@
             startButton.style.display="block";
             stopButton.style.display="none";
             resetButton.style.display="block";
-            doneButton.style.display="block";
 
             stop_flag = 1;
             if (timerId !== null) clearTimeout(timerId);
@@ -193,7 +186,6 @@
                 startButton.style.display="block";
                 stopButton.style.display="none";
                 resetButton.style.display="none";
-                doneButton.style.display="none";
 
                 if (timerId !== null) clearTimeout(timerId);
 
