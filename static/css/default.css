@@ -1,86 +1,60 @@
 body {
     /*text-align: center;*/
+    background: gray;
 }
-#todo {
-    position: relative;
-    top: -10px;
+#task_title{
+    margin: auto 5px;
+    width: 1000px;
     background-color: #3c4543;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-radius: 15px;
 }
-#timer {
-    position: relative;
-    top: -10px;
-    background-color: #3c4543;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+#init_set{
+    position: absolute;
+    top:100px;
+    left:10px;
+}
+#timer_state{
+    position: absolute;
+    top:100px;
+    left: 500px;
+}
+#Button_set {
+    position: absolute;
+    top: 400px;
+    left: 550px;
 }
 .element {
-    position: relative;
-    top: -10px;
+    margin: 5px;
+    width: 400px;
     background-color: #3c4543;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 15px;
+    border-radius: 15px;
 }
 h2 {
     font-family: Verdana;
     font-weight: bold;
     text-align: center;
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     color: #acd1b2;
 }
-#startButton {
+#startButton, #stopButton, #resetButton{
         margin: 30px auto;
-        width: 180px;
-        border-radius: 5px;
-        box-shadow: 0 4px 0 #e91b0c;
+        width: 250px;
+        border-radius: 20px;
+        box-shadow: 0 6px 0 #e91b0c;
         background: #f44336;
         color: #fff;
         cursor: pointer;
-        padding: 7px;
+        padding: 2px;
         text-align: center;
+        font-family: Arial;
+        font-weight: bold;
+        font-size: 40px;
     }
-    #startButton:hover {
+    #startButton:hover, #stopButton:hover, #resetButton:hover{
         opacity: 0.8;
     }
-    #startButton.pushed {
-        margin-top: 32px;
-        box-shadow: 0 2px 0 #e91b0c;
-    }
-#stopButton {
-        margin: 30px auto;
-        width: 180px;
-        border-radius: 5px;
-        box-shadow: 0 4px 0 #e91b0c;
-        background: #f44336;
-        color: #fff;
-        cursor: pointer;
-        padding: 7px;
-        text-align: center;
-    }
-    #stopButton:hover {
-        opacity: 0.8;
-    }
-    #stopButton.pushed {
-        margin-top: 32px;
-        box-shadow: 0 2px 0 #e91b0c;
-    }
-#resetButton {
-        margin: 30px auto;
-        width: 180px;
-        border-radius: 5px;
-        box-shadow: 0 4px 0 #e91b0c;
-        background: #f44336;
-        color: #fff;
-        cursor: pointer;
-        padding: 7px;
-        text-align: center;
-    }
-    #resetButton:hover {
-        opacity: 0.8;
-    }
-    #resetButton.pushed {
+    #startButton.pushed, #stopButton.pushed, #resetButton.pushed, {
         margin-top: 32px;
         box-shadow: 0 2px 0 #e91b0c;
     }
