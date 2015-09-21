@@ -1,62 +1,66 @@
 {% extends "layout.html" %}
 {% block content %}
-<div id="task_title">
-    <h1>{{ todo_name }}</h1>
-</div>
-<div id="init_set">
-    <div class="element" id="set_time">
-        <h2>
-            設定時間&nbsp;
-            {% if set_time >= 3600 %}
-                {{ set_time // 3600}}&nbsp;時間&nbsp;
-            {% endif %}
-            {% if (set_time // 60) % 60 > 0 %}
-                {{ (set_time // 60) % 60}}&nbsp;分
-            {% endif %}
-        </h2>
-        <h2>
-            開始時刻
-            <span id="start_time"></span>
-        </h2>
-        <h2>
-            終了予定時刻
-            <span id="end_time"></span>
-        </h2>
+<div id="container">
+    <div id="header">
+        <div id="task_title">
+            <h2>{{ todo_name }}</h2>
+        </div>
     </div>
-</div>
-<div id="timer_state">
-    <div class="element" id="timer">
-        <h2>
-            開始から
-            <span id="phour"></span>
-            <span id="pminute"></span>
-            <span id="psecond"></span>
-            経過
-            <br>
-            残り
-            <span id="hour"></span>
-            <span id="minute"></span>
-            <span id="second"></span>
-            <br>
-            <span id="ohour" color="red"></span>
-            <span id="ominute" color="red"></span>
-            <span id="osecond" color="red"></span>
-        </h2>
+    <div id="side">
+        <div class="element" id="set_time">
+            <h2>
+                設定時間&nbsp;
+                {% if set_time >= 3600 %}
+                    {{ set_time // 3600}}&nbsp;時間&nbsp;
+                {% endif %}
+                {% if (set_time // 60) % 60 > 0 %}
+                    {{ (set_time // 60) % 60}}&nbsp;分
+                {% endif %}
+            </h2>
+            <h2>
+                開始時刻
+                <span id="start_time"></span>
+            </h2>
+            <h2>
+                終了予定時刻
+                <span id="end_time"></span>
+            </h2>
+        </div>
     </div>
-    <div class="element">
-        <h2>
-            <span id="now_status"></span>
-        </h2>
-    </div>
-</div>
-<div id="Button_set">
-    <div class="Button" id="startButton">
-    </div>
-    <div class="Button" id="stopButton">
-        STOP
-    </div>
-    <div class="Button" id="resetButton">
-        RESET
+    <div id="main">
+        <div class="element" id="timer">
+            <h2>
+                開始から
+                <span id="phour"></span>
+                <span id="pminute"></span>
+                <span id="psecond"></span>
+                経過
+                <br>
+                残り
+                <span id="hour"></span>
+                <span id="minute"></span>
+                <span id="second"></span>
+                <br>
+                <span id="ohour" color="red"></span>
+                <span id="ominute" color="red"></span>
+                <span id="osecond" color="red"></span>
+            </h2>
+        </div>
+        <div class="element" id="state_sentence">
+            <h2>
+                <span id="now_status"></span>
+            </h2>
+        </div>
+        <div id="Button_set">
+            <div class="Button" id="startButton">
+            </div>
+            <div class="Button" id="stopButton">
+                STOP
+            </div>
+            <div class="Button" id="resetButton">
+                RESET
+            </div>
+        </div>
     </div>
 </div>
 <script>
