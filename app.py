@@ -4,6 +4,10 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
 
+@app.route('/')
+def setting_page():
+    return render_template('setting.html')
+
 @app.route('/todo', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
@@ -18,9 +22,9 @@ def index():
                           set_time=set_time)
     return render_template('setting.html')
 
-@app.route('/')
-def setting():
-    return render_template('setting.html')
+@app.route('/done', methods=['POST', 'GET'])
+def done_page():
+    return render_template('done.html')
 
 if __name__ == '__main__':
     app.debug = True

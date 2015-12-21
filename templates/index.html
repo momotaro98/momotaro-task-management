@@ -27,8 +27,13 @@
             </h2>
         </div>
         <div class="Button" id="backButton">
-            <a href="{{ url_for('setting') }}" style="text-decoration: none;">
+            <a href="{{ url_for('setting_page') }}" style="text-decoration: none;">
                 BACK
+            </a>
+        </div>
+        <div class="Button" id="doneButton">
+            <a href="{{ url_for('done_page') }}" style="text-decoration: none;">
+                DONE!
             </a>
         </div>
     </div>
@@ -74,6 +79,7 @@
         'use strict';
 
         var backButton = document.getElementById('backButton');
+        var doneButton = document.getElementById('doneButton');
 
         var startButton = document.getElementById('startButton');
         var stopButton = document.getElementById('stopButton');
@@ -124,6 +130,7 @@
             startButton.innerHTML = "START!";
 
             backButton.style.display = "none";
+            doneButton.style.display = "none";
 
             startButton.style.display="block";
             stopButton.style.display="none";
@@ -152,6 +159,7 @@
             if (stop_flag === 1) {
 
                 backButton.style.display = "none";
+                doneButton.style.display = "none";
 
                 startButton.style.display="none";
                 stopButton.style.display="block";
@@ -178,6 +186,7 @@
             now_status_show.innerHTML = "Stopping Now";
 
             backButton.style.display = "block";
+            doneButton.style.display = "block";
 
             startButton.style.display="block";
             stopButton.style.display="none";
@@ -203,6 +212,7 @@
                 startButton.innerHTML = "START!";
 
                 backButton.style.display = "none";
+                doneButton.style.display = "none";
 
                 startButton.style.display="block";
                 stopButton.style.display="none";
