@@ -1,45 +1,47 @@
 {% extends "layout.html" %}
+
+{% block title %}Setting Page{% endblock %}
+
 {% block content %}
-  <!-- Form
-  ================================================== -->
-<div class="form">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <form action="/todo" method="post" class="form-inline">
-          <h2>Task Title: <input id="title_input" type="text" name="task_title"></h2>
-            <h2>設定時間:
-                <select name="hour">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-            時間
-                <select name="minute">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="3">3</option>
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                    <option value="30">30</option>
-                    <option value="35">35</option>
-                    <option value="40">40</option>
-                    <option value="45">45</option>
-                    <option value="50">50</option>
-                    <option value="55">55</option>
-                </select>
-             分
-            </h2>
-            <h2><input type="submit" value="設定"></h2>
-        </form>
-      </div>
+<div id="container">
+    <div id="header">
+        <div id="task_title">
+            <h2>タスク実行管理アプリ</h2>
+        </div>
     </div>
-  </div>
+    <h2 style="color: #000">これは行う作業に時間制限を設けて効率よくこなすことを目的としたアプリです</h2>
+    <h2 style="color: #000">タスク名と設定時間を決定し"設定！"をクリックorタップしてください</h2>
+    <form action="/todo" method="post" class="form-inline">
+      <h2 style="color: black">タスク名: <input id="title_input" type="text" name="task_title"></h2>
+        <h2 style="color: black">設定時間:
+            <select name="hour">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        時間
+            <select name="minute">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="3">3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="35">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+                <option value="55">55</option>
+            </select>
+         分
+        </h2>
+        <h2><input id="submit_button" type="submit" name="submit" value="設定!"></h2>
+    </form>
 </div>
 {% endblock %}

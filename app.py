@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
 
@@ -11,10 +11,13 @@ def index():
         hour = request.form["hour"]
         minute = request.form["minute"]
         set_time = 3600 * int(hour) + 60 * int(minute)
+        if not todo_name or not set_time:
+            return redirect(url_for('setting'))
         return render_template('index.html',
                         todo_name=todo_name,
                           set_time=set_time)
     return render_template('setting.html')
+
 @app.route('/')
 def setting():
     return render_template('setting.html')

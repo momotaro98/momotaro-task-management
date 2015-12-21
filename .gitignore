@@ -3,3 +3,4 @@
 *.pyc
 venv
 *.swp
+.python-version

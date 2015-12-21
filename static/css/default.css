@@ -8,6 +8,7 @@ body {
     font-size: 16px;
     font-family: Verdana, Arial;
 }
+
 body > #container {
      height: auto;
 }
@@ -22,6 +23,14 @@ body > #container {
      padding: 0 10px;
      box-shadow: 0 0 3px rgba(0,0,0,0.5);
  }
+input#submit_button {
+    padding: 15px 40px;
+    font-size: 1.7em;
+    background-color: #3c4543;
+    border-radius: 15px;
+    font-weight: bold;
+    color: #fff;
+}
 #header{
 }
 #side{
