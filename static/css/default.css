@@ -24,13 +24,21 @@ body > #container {
      box-shadow: 0 0 3px rgba(0,0,0,0.5);
  }
 input#submit_button {
-    padding: 15px 40px;
-    font-size: 1.7em;
-    background-color: #3c4543;
-    border-radius: 15px;
-    font-weight: bold;
+    margin: 30px auto;
+    width: 250px;
+    border-radius: 20px;
+    box-shadow: 0 6px 0 #e91b0c;
+    background: #f44336;
     color: #fff;
+    cursor: pointer;
+    padding: 2px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 40px;
 }
+    input#submit_button:hover{
+        opacity: 0.8;
+    }
 #header{
 }
 #side{
@@ -76,7 +84,7 @@ h3 {
     text-align: left;
     padding-left: 5px;
 }
-#startButton, #stopButton, #resetButton{
+#startButton, #stopButton, #resetButton, #backButton{
         margin: 30px auto;
         width: 250px;
         border-radius: 20px;
@@ -89,10 +97,10 @@ h3 {
         font-weight: bold;
         font-size: 40px;
     }
-    #startButton:hover, #stopButton:hover, #resetButton:hover{
+    #startButton:hover, #stopButton:hover, #resetButton:hover, #backButton:hover{
         opacity: 0.8;
     }
-    #startButton.pushed, #stopButton.pushed, #resetButton.pushed, {
+    #startButton.pushed, #stopButton.pushed, #resetButton.pushed, #backButton.ppushed{
         margin-top: 32px;
         box-shadow: 0 2px 0 #e91b0c;
     }

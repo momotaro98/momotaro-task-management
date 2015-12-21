@@ -26,6 +26,11 @@
                 <span id="end_time"></span>
             </h2>
         </div>
+        <div class="Button" id="backButton">
+            <a href="{{ url_for('setting') }}" style="text-decoration: none;">
+                BACK
+            </a>
+        </div>
     </div>
     <div id="main">
         <div class="element" id="timer">
@@ -67,6 +72,8 @@
     {% if set_time %}
     (function() {
         'use strict';
+
+        var backButton = document.getElementById('backButton');
 
         var startButton = document.getElementById('startButton');
         var stopButton = document.getElementById('stopButton');
@@ -116,6 +123,8 @@
 
             startButton.innerHTML = "START!";
 
+            backButton.style.display = "none";
+
             startButton.style.display="block";
             stopButton.style.display="none";
             resetButton.style.display="none";
@@ -142,6 +151,8 @@
             }
             if (stop_flag === 1) {
 
+                backButton.style.display = "none";
+
                 startButton.style.display="none";
                 stopButton.style.display="block";
                 resetButton.style.display="none";
@@ -166,6 +177,8 @@
 
             now_status_show.innerHTML = "Stopping Now";
 
+            backButton.style.display = "block";
+
             startButton.style.display="block";
             stopButton.style.display="none";
             resetButton.style.display="block";
@@ -188,6 +201,8 @@
             if (stop_flag === 1) {
 
                 startButton.innerHTML = "START!";
+
+                backButton.style.display = "none";
 
                 startButton.style.display="block";
                 stopButton.style.display="none";
