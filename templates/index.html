@@ -74,10 +74,9 @@
     </div>
 </div>
 <script>
-    {% if set_time %}
     (function() {
         'use strict';
-        // ------------------- グローバルDOM変数 グローバル変数達 ------------------------------
+        // ------------------- グローバルDOM変数 グローバル変数達 -------------------
         var backButton = document.getElementById('backButton'); // 戻るボタン
         var doneButton = document.getElementById('doneButton'); // DONEボタン
         var startButton = document.getElementById('startButton'); // スタートボタン
@@ -143,11 +142,12 @@
 
         // ------------------ スタートボタンを押したとき ---------------------------
         startButton.addEventListener('click', function() {
+
             num_SB_pushed++;
+
+            // 初めてスタートボタンが押されるとき
             if (num_SB_pushed === 1) {
-
                 startButton.innerHTML = "RESTART";
-
                 var DD = new Date();
                 var Hours = DD.getHours();
                 var Minutes = DD.getMinutes();
@@ -160,15 +160,13 @@
                 start_time_show.innerHTML = "  " + Hours + " : " + Minutes;
                 end_time_show.innerHTML = "  " + End_Hours + " : " + End_Minutes;
             }
-            if (stop_flag === 1) {
 
+            if (stop_flag === 1) {
                 backButton.style.display = "none";
                 doneButton.style.display = "none";
-
                 startButton.style.display="none";
                 stopButton.style.display="block";
                 resetButton.style.display="none";
-
                 now_status_show.innerHTML = "You are working. Fight!";
 
                 stop_flag = 0;
@@ -183,22 +181,21 @@
         startButton.addEventListener('mouseup', function() {
             this.className = '';
         });
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
 
         // ------------------ ストップボタンを押したとき ---------------------------
         stopButton.addEventListener('click', function() {
 
-            now_status_show.innerHTML = "Stopping Now";
-
             backButton.style.display = "block";
             doneButton.style.display = "block";
-
             startButton.style.display="block";
             stopButton.style.display="none";
             resetButton.style.display="block";
+            now_status_show.innerHTML = "Stopping Now";
 
             stop_flag = 1;
             if (timerId !== null) clearTimeout(timerId);
+            // 次にrunTimer関数を動作させるときに続きからとなるように保存
             current_time = remained_time;
             pcurrent_time = serial_passed_time;
         });
@@ -209,7 +206,7 @@
         stopButton.addEventListener('mouseup', function() {
             this.className = '';
         });
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
 
         // ------------- リセットボタンを押したとき --------------------------------
         resetButton.addEventListener('click', function() {
@@ -231,7 +228,7 @@
         resetButton.addEventListener('mouseup', function() {
             this.className = '';
         });
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
 
         // タイマー処理関数
         function runTimer() {
@@ -294,6 +291,5 @@
             }, 10);
         }
     })();
-    {% endif %}
 </script>
 {% endblock %}

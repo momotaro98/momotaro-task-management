@@ -16,7 +16,7 @@ def index():
         minute = request.form["minute"]
         set_time = 3600 * int(hour) + 60 * int(minute)
         if not todo_name or not set_time:
-            return redirect(url_for('setting'))
+            return redirect(url_for('setting_page'))
         return render_template('index.html',
                         todo_name=todo_name,
                           set_time=set_time)
