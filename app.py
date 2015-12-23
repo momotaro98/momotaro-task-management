@@ -39,11 +39,11 @@ def done_page():
         set_hour = set_time // 3600
         set_minute = (set_time % 3600) // 60
         if set_hour and set_minute:
-            set_time_output = "{0} 時間 {1} 分".format(set_hour, set_minute)
+            set_time_output = "設定時間 {0} 時間 {1} 分".format(set_hour, set_minute)
         elif set_hour:
-            set_time_output = "{0} 時間".format(set_hour)
+            set_time_output = "設定時間 {0} 時間".format(set_hour)
         else:
-            set_time_output = "{0} 分".format(set_minute)
+            set_time_output = "設定時間 {0} 分".format(set_minute)
 
         start_time = "{0} 時 {1} 分".format(Hours, Minutes)
     return render_template('done.html',
