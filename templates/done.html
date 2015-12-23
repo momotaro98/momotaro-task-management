@@ -1,9 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
 <div id="container">
-    <h2>{{ set_time_output }}</h2>
-    <h2>{{ start_time }}</h2>
-    <h2>{{ remained_time }}</h2>
+    {% if set_hour and set_minute %}
+    <h2>設定時間 {{ set_hour }} 時間 {{ set_minute }} 分</h2>
+    {% elif set_hour %}
+    <h2>設定時間 {{ set_hour }} 時間</h2>
+    {% else %}
+    <h2>設定時間 {{ set_minute }} 分</h2>
+    {% endif %}
+    <h2>{{ start_hour }}</h2>
+    <h2>{{ start_minute }}</h2>
     <h2>{{ serial_passed_time }}</h2>
 </div>
 {% endblock %}
