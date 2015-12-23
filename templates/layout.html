@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
     <head>
-    <meta charset="utf-8">
-    <link type="text/css" rel="stylesheet" href="/static/css/default.css"/>
+        {% block head %}
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="/static/css/default.css"/>
+        <link rel="shortcut icon" href="/static/image/favicon.ico">
+        <title>{% block title %}{% endblock %} - Task Do App</title>
+        {% endblock %}
     </head>
     <body>
         {% block content %}{% endblock %}

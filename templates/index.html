@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+
+{% block title %}Main View{% endblock %}
+
 {% block content %}
 <div id="container">
     <div id="header">
@@ -27,8 +30,8 @@
             </h2>
         </div>
         <div class="Button" id="backButton">
-            <a href="{{ url_for('setting_page') }}" style="text-decoration: none;">
-                BACK
+            <a href="{{ url_for('setting_page') }}" style="text-decoration: none; color: #fff;">
+                HOME
             </a>
         </div>
         <form name="input_form" action="/done" method="post" onsubmit="get_javascript_variable()">
