@@ -3,6 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import sys
 import logging
+import datetime
 
 app = Flask(__name__)
 
@@ -36,15 +37,19 @@ def done_page():
         remained_time = int(request.form["remained_time"]) # 残り時間
         serial_passed_time = int(request.form["serial_passed_time"]) # 経過時間
 
+        done_date = datetime.date.today()
         set_hour = set_time // 3600
         set_minute = (set_time % 3600) // 60
 
-    return render_template('done.html',
-                        set_hour=set_hour,
-                        set_minute=set_minute,
-                        start_hour=start_hour,
-                        start_minute=start_minute,
-                        serial_passed_time=serial_passed_time)
+        return render_template('done.html',
+                            done_date=done_date,
+                            set_hour=set_hour,
+                            set_minute=set_minute,
+                            start_hour=start_hour,
+                            start_minute=start_minute,
+                            serial_passed_time=serial_passed_time)
+
+    return render_template('setting.html')
 
 if __name__ == '__main__':
     app.debug = True
