@@ -36,6 +36,7 @@ def done_page():
         start_minute = int(request.form["Minutes"]) # 開始時間 分
         remained_time = int(request.form["remained_time"]) # 残り時間
         serial_passed_time = int(request.form["serial_passed_time"]) # 経過時間
+        task_title = request.form["task_title"]
 
         done_date = datetime.date.today()
         set_hour = set_time // 3600
@@ -47,7 +48,8 @@ def done_page():
                             set_minute=set_minute,
                             start_hour=start_hour,
                             start_minute=start_minute,
-                            serial_passed_time=serial_passed_time)
+                            serial_passed_time=serial_passed_time,
+                            task_title=task_title)
 
     return render_template('setting.html')
 

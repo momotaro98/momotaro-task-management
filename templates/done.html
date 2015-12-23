@@ -2,6 +2,7 @@
 {% block content %}
 <div id="container">
     <h2>実行日 {{ done_date.year }}年{{ done_date.month }}月{{ done_date.day }}日</h2>
+    <h2>タスク名 "{{ task_title }}"</h2>
     {% if set_hour and set_minute %}
     <h2>設定時間 {{ set_hour }} 時間 {{ set_minute }} 分</h2>
     {% elif set_hour %}

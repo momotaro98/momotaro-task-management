@@ -33,11 +33,12 @@
         </div>
         <form name="input_form" action="/done" method="post" onsubmit="get_javascript_variable()">
             <input id="doneButton" type="submit" name="submit" value="DONE!" />
-            <input type="hidden" name="set_time" value="" />
+            <input type="hidden" name="set_time" value="{{ set_time }}" />
             <input type="hidden" name="Hours" value="" />
             <input type="hidden" name="Minutes" value="" />
             <input type="hidden" name="remained_time" value="" />
             <input type="hidden" name="serial_passed_time" value="" />
+            <input type="hidden" name="task_title" value="{{ todo_name }}" />
         </form>
     </div>
     <div id="main">
@@ -297,7 +298,6 @@
     }
 
     function get_javascript_variable(){
-        document.forms['input_form'].elements['set_time'].value = set_time;
         document.forms['input_form'].elements['Hours'].value = Hours;
         document.forms['input_form'].elements['Minutes'].value = Minutes;
         document.forms['input_form'].elements['remained_time'].value = remained_time;
