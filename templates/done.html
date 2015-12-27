@@ -34,10 +34,8 @@
         <h2>終了時刻 {{ done_datetime.hour }}:{{ done_datetime.minute }}</h2>
         {% endif %}
 
-        {% if set_hour and set_minute %}
+        {% if serial_passed_hour %}
         <h2>実行時間 {{ serial_passed_hour }} 時間 {{ serial_passed_minute }} 分</h2>
-        {% elif set_hour %}
-        <h2>実行時間 {{ serial_passed_hour }} 時間</h2>
         {% else %}
         <h2>実行時間 {{ serial_passed_minute }} 分</h2>
         {% endif %}
