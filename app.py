@@ -12,7 +12,11 @@ app.logger.setLevel(logging.ERROR)
 
 @app.route('/')
 def setting_page():
-    return render_template('setting.html')
+    is_task_title = False
+    is_set_time = False
+    return render_template('setting.html',
+                            is_task_title=is_task_title,
+                            is_set_time=is_set_time)
 
 @app.route('/todo', methods=['POST', 'GET'])
 def index():
@@ -22,7 +26,15 @@ def index():
         minute = request.form["minute"]
         set_time = 3600 * int(hour) + 60 * int(minute)
         if not todo_name or not set_time:
-            return redirect(url_for('setting_page'))
+            is_task_title = True
+            is_set_time = True
+            if todo_name:
+                is_task_title = False
+            if set_time:
+                is_set_time = False
+            return render_template('setting.html',
+                                    is_task_title=is_task_title,
+                                    is_set_time=is_set_time)
         return render_template('index.html',
                         todo_name=todo_name,
                           set_time=set_time)
