@@ -34,7 +34,7 @@
                 HOME
             </a>
         </div>
-        <form name="input_form" action="/done" method="post" onsubmit="get_javascript_variable()">
+        <form id="doneSubmit" name="input_form" action="/done" method="post" onsubmit="get_javascript_variable()">
             <input id="doneButton" type="submit" name="submit" value="DONE!" />
             <input type="hidden" name="set_time" value="{{ set_time }}" />
             <input type="hidden" name="Hours" value="" />
@@ -42,6 +42,17 @@
             <input type="hidden" name="remained_time" value="" />
             <input type="hidden" name="serial_passed_time" value="" />
             <input type="hidden" name="task_title" value="{{ todo_name }}" />
+
+            <p style="color: black">
+                実行結果をメールする:
+                <input type="checkbox" name="send_mail_or_not" value="yes" />
+            </p>
+            <p style="color: black">
+                送信先メールアドレス:
+                <br/>
+                <input type="text" name="mail_address" size="50"/>
+            </p>
+
         </form>
     </div>
     <div id="main">
@@ -84,7 +95,7 @@
     'use strict';
     // ------------------- グローバルDOM変数 グローバル変数達 -------------------
     var backButton = document.getElementById('backButton'); // 戻るボタン
-    var doneButton = document.getElementById('doneButton'); // DONEボタン
+    var doneSubmit = document.getElementById('doneSubmit'); // DONEボタン
     var startButton = document.getElementById('startButton'); // スタートボタン
     var stopButton = document.getElementById('stopButton'); // ストップボタン
     var resetButton = document.getElementById('resetButton'); // リセットボタン
@@ -118,7 +129,7 @@
     {
         // DOM設定初期化
         backButton.style.display = "none";
-        doneButton.style.display = "none";
+        doneSubmit.style.display = "none";
         startButton.style.display="block";
         stopButton.style.display="none";
         resetButton.style.display="none";
@@ -172,7 +183,7 @@
 
         if (stop_flag === 1) {
             backButton.style.display = "none";
-            doneButton.style.display = "none";
+            doneSubmit.style.display = "none";
             startButton.style.display="none";
             stopButton.style.display="block";
             resetButton.style.display="none";
@@ -196,7 +207,7 @@
     stopButton.addEventListener('click', function() {
 
         backButton.style.display = "block";
-        doneButton.style.display = "block";
+        doneSubmit.style.display = "block";
         startButton.style.display="block";
         stopButton.style.display="none";
         resetButton.style.display="block";

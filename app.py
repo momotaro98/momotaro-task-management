@@ -62,6 +62,14 @@ def done_page():
         start_minute = int(request.form["Minutes"]) # 開始時間 分
         remained_time = int(request.form["remained_time"]) # 残り時間
         serial_passed_time = -1 * int(request.form["serial_passed_time"]) # 経過時間
+        try:
+            send_mail_or_not = request.form["send_mail_or_not"] # メールを送るかどうか
+            mail_address = request.form["mail_address"]
+            mail_success_flag = 1
+        except:
+            send_mail_or_not = ""
+            mail_address = ""
+            mail_success_flag = 0
 
         done_datetime = datetime.datetime.now()
         set_hour = set_time // 3600
@@ -74,63 +82,66 @@ def done_page():
         over_minute = (over_time % 3600) // 60
 
         ''' Mail Sending '''
-        msg = Message(
-                '{0} #TaskDoApp'.format(task_title),
-                sender = 'ochatarodev98@gmail.com',
-                recipients = ['ikenshirogivenup98@gmail.com'])
+        if send_mail_or_not == "yes":
+            msg = Message(
+                    '{0} @TaskDoApp #TaskDoApp'.format(task_title),
+                    sender = 'ochatarodev98@gmail.com',
+                    recipients = [mail_address])
+                    # recipients = ['ikenshirogivenup98@gmail.com'])
 
-        ### Make Mail Body List Start ###
-        body_list = []
-        # Header
-        body_list.append("<h1>Task Do App 実行結果</h1>")
-        # Task Name
-        body_list.append("<h2>タスク名: {0}</h2>".format(task_title))
-        # Done Date
-        body_list.append("<h2>実行日: {0}年{1}月{2}日</h2>".format(\
-                                                             done_datetime.year,
-                                                             done_datetime.month,
-                                                             done_datetime.day,
-                                                           ))
-        # Set Time
-        if set_hour and set_minute:
-            body_list.append("<h2>設定時間: {0}時間{1}分</h2>".format(set_hour, set_minute))
-        elif set_hour:
-            body_list.append("<h2>設定時間: {0}時間</h2>".format(set_hour))
-        elif set_minute:
-            body_list.append("<h2>設定時間: {0}分</h2>".format(set_minute))
-        # Start Time
-        body_list.append("<h2>開始時刻: {0}:{1:0>2}</h2>".format(start_hour, start_minute))
-        # End Time
-        body_list.append("<h2>終了時刻: {0}:{1:0>2}</h2>".format(done_datetime.hour,
-                                                               done_datetime.minute,
+            ### Make Mail Body List Start ###
+            body_list = []
+            # タスク名
+            body_list.append("<h2>タスク名: {0}</h2>".format(task_title))
+            # 日付
+            body_list.append("<h2>実行日: {0}年{1}月{2}日</h2>".format(\
+                                                                 done_datetime.year,
+                                                                 done_datetime.month,
+                                                                 done_datetime.day,
                                                                ))
-        # Doing Time
-        if serial_passed_hour:
-            body_list.append("<h2>実行時間: {0}時間{1}分</h2>".format(serial_passed_hour,
-                                                                   serial_passed_minute,
-                                                                   ))
-        else:
-            body_list.append("<h2>実行時間: {0}分</h2>".format(serial_passed_minute))
-        # Over Time
-        if over_time>0:
-            if over_hour and over_minute:
-                body_list.append("<h2>超過時間: {0}時間{1}分</h2>".format(over_hour,
-                                                                      over_minute,
-                                                                      ))
+            # 設定時間
+            if set_hour and set_minute:
+                body_list.append("<h2>設定時間: {0}時間{1}分</h2>".format(set_hour, set_minute))
             elif set_hour:
-                body_list.append("<h2>超過時間: {0}時間</h2>".format(over_hour))
+                body_list.append("<h2>設定時間: {0}時間</h2>".format(set_hour))
             elif set_minute:
-                body_list.append("<h2>超過時間: {0}分</h2>".format(over_minute))
-        else:
-            body_list.append("<h2>設定時間内に実行完了!<h2>")
+                body_list.append("<h2>設定時間: {0}分</h2>".format(set_minute))
+            # 開始時刻
+            body_list.append("<h2>開始時刻: {0}:{1:0>2}</h2>".format(start_hour, start_minute))
+            # 終了時刻
+            body_list.append("<h2>終了時刻: {0}:{1:0>2}</h2>".format(done_datetime.hour,
+                                                                   done_datetime.minute,
+                                                                   ))
+            # 実行時間
+            if serial_passed_hour:
+                body_list.append("<h2>実行時間: {0}時間{1}分</h2>".format(serial_passed_hour,
+                                                                       serial_passed_minute,
+                                                                       ))
+            else:
+                body_list.append("<h2>実行時間: {0}分</h2>".format(serial_passed_minute))
+            # 超過時間
+            if over_time>0:
+                if over_hour and over_minute:
+                    body_list.append("<h2>超過時間: {0}時間{1}分</h2>".format(over_hour,
+                                                                          over_minute,
+                                                                          ))
+                elif set_hour:
+                    body_list.append("<h2>超過時間: {0}時間</h2>".format(over_hour))
+                elif set_minute:
+                    body_list.append("<h2>超過時間: {0}分</h2>".format(over_minute))
+            else:
+                body_list.append("<h2>設定時間内に実行完了!<h2>")
 
-        # Make Mail Body
-        # msg.body = "\n".join(body_list)
-        msg.html = "\n".join(body_list)
-        ''' Make Mail Body List End '''
-        # Send Mail
-        with app.app_context():
-            mail.send(msg)
+            # Make Mail Body
+            # msg.body = "\n".join(body_list)
+            msg.html = "\n".join(body_list)
+
+            # Send Mail
+            try:
+                with app.app_context():
+                    mail.send(msg)
+            except:
+                mail_success_flag = 0
 
         return render_template('done.html',
                             done_datetime=done_datetime,
@@ -143,7 +154,10 @@ def done_page():
                             serial_passed_minute=serial_passed_minute,
                             over_time=over_time,
                             over_hour=over_hour,
-                            over_minute=over_minute
+                            over_minute=over_minute,
+                            send_mail_or_not=send_mail_or_not,
+                            mail_success_flag=mail_success_flag,
+                            mail_address=mail_address
                             )
 
     return render_template('setting.html')
