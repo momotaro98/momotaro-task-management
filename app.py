@@ -130,7 +130,9 @@ def done_page():
                 elif set_minute:
                     body_list.append("<h2>超過時間: {0}分</h2>".format(over_minute))
             else:
-                body_list.append("<h2>設定時間内に実行完了!<h2>")
+                body_list.append("<h2>設定時間内に実行完了!</h2>")
+
+            body_list.append('This mail was sent by <a href="http://ancient-reaches-5759.herokuapp.com/">Task Do App</a>')
 
             # Make Mail Body
             # msg.body = "\n".join(body_list)
