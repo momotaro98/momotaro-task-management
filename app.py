@@ -3,8 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
-import sys, codecs
-sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
+import sys
 import logging
 import datetime
 
