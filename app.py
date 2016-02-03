@@ -2,6 +2,9 @@
 
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask.ext.script import Manager
+from flask.ext.wtf import Form
+from wtforms import StringField, SelectField, SubmitField
+# from wtforms.validators import Required
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
 import sys
@@ -12,6 +15,7 @@ app = Flask(__name__)
 
 app.config.update(dict(
     DEBUG = True,
+    SECRET_KEY = 'hard to guess string',
     MAIL_SERVER = 'smtp.gmail.com',
     MAIL_PORT = 587,
     MAIL_USE_TLS = True,
@@ -25,13 +29,23 @@ mail = Mail(app)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
+class InputForm(Form):
+    task_title = StringField('タスク名: ')
+    hour = SelectField('時間', choices=[(i, i) for i in range(1, 6)])
+    min_list = [0, 1, 3] + [i for i in range(5, 60 ,5)]
+    minute = SelectField('分', choices=[(i, i) for i in min_list])
+    submit = SubmitField('設定!')
+
 @app.route('/')
 def setting_page():
+    form = InputForm()
     is_task_title = False
     is_set_time = False
     return render_template('setting.html',
+                            form=form,
                             is_task_title=is_task_title,
-                            is_set_time=is_set_time)
+                            is_set_time=is_set_time,
+                            )
 
 @app.route('/todo', methods=['POST', 'GET'])
 def index():
