@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask.ext.script import Manager
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
 import sys
@@ -18,6 +19,7 @@ app.config.update(dict(
     MAIL_USERNAME = 'ochatarodev98@gmail.com',
     MAIL_PASSWORD = 'ochaochaoishii9898',
 ))
+manager = Manager(app)
 mail = Mail(app)
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -165,4 +167,5 @@ def done_page():
     return render_template('setting.html')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1')
+    manager.run()
+    # app.run(host='127.0.0.1')
