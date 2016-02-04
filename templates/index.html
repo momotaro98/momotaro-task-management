@@ -47,9 +47,8 @@
                 {{ form.send_mail_or_not() }}
             </p>
             <p style="color: black">
-                送信先メールアドレス:
-                <br/>
-                <input type="text" name="mail_address" size="50"/>
+                {{ form.mail_address.label }}
+                {{ form.mail_address(size='50') }}
             </p>
             {{ form.submit(id='doneButton') }}
         </form>
