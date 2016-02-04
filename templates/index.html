@@ -35,24 +35,23 @@
             </a>
         </div>
         <form id="doneSubmit" name="input_form" action="/done" method="post" onsubmit="get_javascript_variable()">
-            <input id="doneButton" type="submit" name="submit" value="DONE!" />
-            <input type="hidden" name="set_time" value="{{ set_time }}" />
-            <input type="hidden" name="Hours" value="" />
-            <input type="hidden" name="Minutes" value="" />
-            <input type="hidden" name="remained_time" value="" />
-            <input type="hidden" name="serial_passed_time" value="" />
-            <input type="hidden" name="task_title" value="{{ todo_name }}" />
+            {{ form.set_time() }}
+            {{ form.Hours() }}
+            {{ form.Minutes() }}
+            {{ form.remained_time() }}
+            {{ form.serial_passed_time() }}
+            {{ form.task_title() }}
 
             <p style="color: black">
-                実行結果をメールする:
-                <input type="checkbox" name="send_mail_or_not" value="yes" />
+                {{ form.send_mail_or_not.label }}
+                {{ form.send_mail_or_not() }}
             </p>
             <p style="color: black">
                 送信先メールアドレス:
                 <br/>
                 <input type="text" name="mail_address" size="50"/>
             </p>
-
+            {{ form.submit(id='doneButton') }}
         </form>
     </div>
     <div id="main">
@@ -117,6 +116,7 @@
     var remained_time; // 残り時間変数
     var serial_passed_time; // 経過時間変数
     var set_time = {{ set_time }}; // 設定時間
+    var task_title = "{{ todo_name }}"; // タスク名(hiddenフィールドに受け渡すための変数)
     var current_time = set_time;
     var pcurrent_time = 0;
     var stop_flag = 1; // ストップボタンを押しているかのフラグ
@@ -312,6 +312,8 @@
     }
 
     function get_javascript_variable(){
+        document.forms['input_form'].elements['task_title'].value = task_title;
+        document.forms['input_form'].elements['set_time'].value = set_time;
         document.forms['input_form'].elements['Hours'].value = Hours;
         document.forms['input_form'].elements['Minutes'].value = Minutes;
         document.forms['input_form'].elements['remained_time'].value = remained_time;

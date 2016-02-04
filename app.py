@@ -3,8 +3,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask.ext.script import Manager
 from flask.ext.wtf import Form
-from wtforms import StringField, SelectField, SubmitField
-# from wtforms.validators import Required
+from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
 import sys
@@ -29,16 +28,38 @@ mail = Mail(app)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
-class InputForm(Form):
+class TaskInputForm(Form):
     task_title = StringField('タスク名: ')
-    hour = SelectField('時間', choices=[(i, i) for i in range(1, 6)])
+    hour = SelectField('時間', choices=[(i, i) for i in range(0, 6)])
     min_list = [0, 1, 3] + [i for i in range(5, 60 ,5)]
     minute = SelectField('分', choices=[(i, i) for i in min_list])
     submit = SubmitField('設定!')
 
+class DoneForm(Form):
+    submit = SubmitField('DONE!')
+    '''
+    Booleanではvalueを渡せない？ため失敗
+    send_mail_or_not = BooleanField(
+            label='実行結果をメールする',
+            validators=[validators.Required()],
+            default=False,
+            )
+    '''
+    send_mail_or_not = SelectField(
+            '実行結果をメールしますか:',
+            choices=[('no', 'いいえ'), ('yes', 'はい')],
+            )
+    mail_address = StringField('送信先メールアドレス')
+    task_title = HiddenField('')
+    set_time = HiddenField('')
+    Hours = HiddenField('')
+    Minutes = HiddenField('')
+    remained_time = HiddenField('')
+    serial_passed_time = HiddenField('')
+
 @app.route('/')
 def setting_page():
-    form = InputForm()
+    form = TaskInputForm()
     is_task_title = False
     is_set_time = False
     return render_template('setting.html',
@@ -61,13 +82,20 @@ def index():
                 is_task_title = False
             if set_time:
                 is_set_time = False
+            form = TaskInputForm()
             return render_template('setting.html',
+                                    form=form,
                                     is_task_title=is_task_title,
-                                    is_set_time=is_set_time)
+                                    is_set_time=is_set_time,
+                                    )
+
+        form = DoneForm()
         return render_template('index.html',
-                        todo_name=todo_name,
-                          set_time=set_time)
-    return render_template('setting.html')
+                                form=form,
+                                todo_name=todo_name,
+                                set_time=set_time,
+                                )
+    return redirect(url_for('setting_page'))
 
 @app.route('/done', methods=['POST', 'GET'])
 def done_page():
@@ -78,14 +106,10 @@ def done_page():
         start_minute = int(request.form["Minutes"]) # 開始時間 分
         remained_time = int(request.form["remained_time"]) # 残り時間
         serial_passed_time = -1 * int(request.form["serial_passed_time"]) # 経過時間
-        try:
-            send_mail_or_not = request.form["send_mail_or_not"] # メールを送るかどうか
-            mail_address = request.form["mail_address"]
-            mail_success_flag = 1
-        except:
-            send_mail_or_not = ""
-            mail_address = ""
-            mail_success_flag = 0
+
+        send_mail_or_not = True if request.form["send_mail_or_not"]=='yes' else False
+        mail_address = request.form["mail_address"]
+        mail_success_flag = True
 
         done_datetime = datetime.datetime.now()
         set_hour = set_time // 3600
@@ -98,12 +122,12 @@ def done_page():
         over_minute = (over_time % 3600) // 60
 
         ''' Mail Sending '''
-        if send_mail_or_not == "yes":
+        if send_mail_or_not:
             msg = Message(
                     '{0} @TaskDoApp #TaskDoApp'.format(task_title),
                     sender = 'ochatarodev98@gmail.com',
-                    recipients = [mail_address])
-                    # recipients = ['ikenshirogivenup98@gmail.com'])
+                    recipients = [mail_address],
+                    )
 
             ### Make Mail Body List Start ###
             body_list = []
@@ -159,7 +183,7 @@ def done_page():
                 with app.app_context():
                     mail.send(msg)
             except:
-                mail_success_flag = 0
+                mail_success_flag = False
 
         return render_template('done.html',
                             done_datetime=done_datetime,
@@ -178,7 +202,7 @@ def done_page():
                             mail_address=mail_address
                             )
 
-    return render_template('setting.html')
+    return redirect(url_for('setting_page'))
 
 if __name__ == '__main__':
     manager.run()
