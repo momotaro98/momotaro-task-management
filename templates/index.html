@@ -6,7 +6,7 @@
 <div id="container">
     <div id="header">
         <div id="task_title">
-            <h2>{{ todo_name }}</h2>
+            <h2>{{ task_title }}</h2>
         </div>
     </div>
     <div id="side">
@@ -35,12 +35,10 @@
             </a>
         </div>
         <form id="doneSubmit" name="input_form" action="/done" method="post" onsubmit="get_javascript_variable()">
-            {{ form.set_time() }}
             {{ form.Hours() }}
             {{ form.Minutes() }}
             {{ form.remained_time() }}
             {{ form.serial_passed_time() }}
-            {{ form.task_title() }}
 
             <p style="color: black">
                 {{ form.send_mail_or_not.label }}
@@ -115,7 +113,6 @@
     var remained_time; // 残り時間変数
     var serial_passed_time; // 経過時間変数
     var set_time = {{ set_time }}; // 設定時間
-    var task_title = "{{ todo_name }}"; // タスク名(hiddenフィールドに受け渡すための変数)
     var current_time = set_time;
     var pcurrent_time = 0;
     var stop_flag = 1; // ストップボタンを押しているかのフラグ
@@ -311,8 +308,6 @@
     }
 
     function get_javascript_variable(){
-        document.forms['input_form'].elements['task_title'].value = task_title;
-        document.forms['input_form'].elements['set_time'].value = set_time;
         document.forms['input_form'].elements['Hours'].value = Hours;
         document.forms['input_form'].elements['Minutes'].value = Minutes;
         document.forms['input_form'].elements['remained_time'].value = remained_time;

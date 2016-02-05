@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, session, render_template, request, redirect, url_for, flash
 from flask.ext.script import Manager
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
@@ -50,8 +50,6 @@ class DoneForm(Form):
             choices=[('no', 'いいえ'), ('yes', 'はい')],
             )
     mail_address = StringField('送信先メールアドレス')
-    task_title = HiddenField('')
-    set_time = HiddenField('')
     Hours = HiddenField('')
     Minutes = HiddenField('')
     remained_time = HiddenField('')
@@ -71,14 +69,18 @@ def setting_page():
 @app.route('/todo', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
-        todo_name = request.form["task_title"]
+        task_title = request.form["task_title"]
         hour = request.form["hour"]
         minute = request.form["minute"]
         set_time = 3600 * int(hour) + 60 * int(minute)
-        if not todo_name or not set_time:
+
+        session["task_title"] = task_title
+        session["set_time"] = set_time
+
+        if not task_title or not set_time:
             is_task_title = True
             is_set_time = True
-            if todo_name:
+            if task_title:
                 is_task_title = False
             if set_time:
                 is_set_time = False
@@ -92,7 +94,7 @@ def index():
         form = DoneForm()
         return render_template('index.html',
                                 form=form,
-                                todo_name=todo_name,
+                                task_title=task_title,
                                 set_time=set_time,
                                 )
     return redirect(url_for('setting_page'))
@@ -100,8 +102,12 @@ def index():
 @app.route('/done', methods=['POST', 'GET'])
 def done_page():
     if request.method == 'POST':
+        task_title = session["task_title"]
+        set_time = session["set_time"]
+        """
         task_title = request.form["task_title"]
         set_time = int(request.form["set_time"]) # 設定時間
+        """
         start_hour = int(request.form["Hours"]) # 開始時間 時
         start_minute = int(request.form["Minutes"]) # 開始時間 分
         remained_time = int(request.form["remained_time"]) # 残り時間
@@ -199,7 +205,7 @@ def done_page():
                             over_minute=over_minute,
                             send_mail_or_not=send_mail_or_not,
                             mail_success_flag=mail_success_flag,
-                            mail_address=mail_address
+                            mail_address=mail_address,
                             )
 
     return redirect(url_for('setting_page'))
