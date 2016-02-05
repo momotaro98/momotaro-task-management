@@ -23,7 +23,7 @@
     <form action="/todo" method="post" class="form-inline">
         <h2 style="color: black">
             {{ form.hidden_tag() }}
-            {{ form.task_title.label }}{{ form.task_title(id='title_input') }}
+            {{ form.task_title.label }}{{ form.task_title(value=set_task_title, id='title_input') }}
         </h2>
         <h2 style="color: black">設定時間:
             {{ form.hour }} 時間 {{ form.minute }} 分

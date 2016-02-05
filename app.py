@@ -37,14 +37,6 @@ class TaskInputForm(Form):
 
 class DoneForm(Form):
     submit = SubmitField('DONE!')
-    '''
-    Booleanではvalueを渡せない？ため失敗
-    send_mail_or_not = BooleanField(
-            label='実行結果をメールする',
-            validators=[validators.Required()],
-            default=False,
-            )
-    '''
     send_mail_or_not = SelectField(
             '実行結果をメールしますか:',
             choices=[('no', 'いいえ'), ('yes', 'はい')],
@@ -55,15 +47,22 @@ class DoneForm(Form):
     remained_time = HiddenField('')
     serial_passed_time = HiddenField('')
 
+
 @app.route('/')
 def setting_page():
     form = TaskInputForm()
     is_task_title = False
     is_set_time = False
+
+    if 'task_title' in session and 'set_time' in session:
+        set_task_title = session['task_title']
+    else:
+        set_task_title = ''
     return render_template('setting.html',
                             form=form,
                             is_task_title=is_task_title,
                             is_set_time=is_set_time,
+                            set_task_title=set_task_title,
                             )
 
 @app.route('/todo', methods=['POST', 'GET'])
@@ -74,8 +73,9 @@ def index():
         minute = request.form["minute"]
         set_time = 3600 * int(hour) + 60 * int(minute)
 
+        # session
         session["task_title"] = task_title
-        session["set_time"] = set_time
+        # session["set_time"] = set_time
 
         if not task_title or not set_time:
             is_task_title = True
@@ -85,10 +85,14 @@ def index():
             if set_time:
                 is_set_time = False
             form = TaskInputForm()
+
+            set_task_title = session['task_title']
+
             return render_template('setting.html',
                                     form=form,
                                     is_task_title=is_task_title,
                                     is_set_time=is_set_time,
+                                    set_task_title=set_task_title,
                                     )
 
         form = DoneForm()
@@ -102,12 +106,9 @@ def index():
 @app.route('/done', methods=['POST', 'GET'])
 def done_page():
     if request.method == 'POST':
-        task_title = session["task_title"]
-        set_time = session["set_time"]
-        """
-        task_title = request.form["task_title"]
-        set_time = int(request.form["set_time"]) # 設定時間
-        """
+        task_title = session["task_title"] # タスク名
+        set_time = session["set_time"] # 設定時間
+
         start_hour = int(request.form["Hours"]) # 開始時間 時
         start_minute = int(request.form["Minutes"]) # 開始時間 分
         remained_time = int(request.form["remained_time"]) # 残り時間
