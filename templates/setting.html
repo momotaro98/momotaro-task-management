@@ -4,8 +4,19 @@
 
 {% block content %}
 <div id="container">
+    <form action="/" method="post" class="form-inline">
+        {{ login_form.hidden_tag() }}
+        {{ login_form.name }}
+        {{ login_form.submit() }}
+    </form>
     <div id="header">
         <div id="task_title">
+            <h2>Hello! {{ name }}</h2>
+            {% if known %}
+            <h2>Thank you for comming again</h2>
+            {% else %}
+            <h2>Sorry... I don't know you</h2>
+            {% endif %}
             <h2>タスク実行管理アプリ</h2>
         </div>
     </div>

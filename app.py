@@ -28,6 +28,10 @@ mail = Mail(app)
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
+class NameForm(Form):
+    name = StringField('What is your name?', validators=[validators.Required()])
+    submit = SubmitField('Submit')
+
 class TaskInputForm(Form):
     task_title = StringField('タスク名: ')
     hour = SelectField('時間', choices=[(i, i) for i in range(0, 6)])
@@ -48,8 +52,18 @@ class DoneForm(Form):
     serial_passed_time = HiddenField('')
 
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def setting_page():
+    login_form = NameForm()
+    if login_form.validate_on_submit():
+        user = login_form.name.data
+        if user == "momotaro":
+            session['known'] = True
+            session['name'] = user
+        else:
+            session['known'] = False
+        return redirect(url_for('setting_page'))
+
     form = TaskInputForm()
     is_task_title = False
     is_set_time = False
@@ -59,10 +73,13 @@ def setting_page():
     else:
         set_task_title = ''
     return render_template('setting.html',
+                            login_form=login_form,
                             form=form,
                             is_task_title=is_task_title,
                             is_set_time=is_set_time,
                             set_task_title=set_task_title,
+                            name=session.get('name', 'guest'),
+                            known=session.get('known', False),
                             )
 
 @app.route('/todo', methods=['POST', 'GET'])
@@ -93,6 +110,8 @@ def index():
                                     is_task_title=is_task_title,
                                     is_set_time=is_set_time,
                                     set_task_title=set_task_title,
+                                    name=session.get('name', 'guest'),
+                                    known=session.get('known', False),
                                     )
 
         form = DoneForm()
