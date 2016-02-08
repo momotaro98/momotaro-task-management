@@ -57,9 +57,9 @@ def setting_page():
     login_form = NameForm()
     if login_form.validate_on_submit():
         user = login_form.name.data
+        session['name'] = user
         if user == "momotaro":
             session['known'] = True
-            session['name'] = user
         else:
             session['known'] = False
         return redirect(url_for('setting_page'))
@@ -92,7 +92,7 @@ def index():
 
         # session
         session["task_title"] = task_title
-        # session["set_time"] = set_time
+        session["set_time"] = set_time
 
         if not task_title or not set_time:
             is_task_title = True
