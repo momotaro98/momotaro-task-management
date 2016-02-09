@@ -55,6 +55,8 @@ class DoneForm(Form):
 @app.route('/', methods=['POST', 'GET'])
 def setting_page():
     login_form = NameForm()
+    form = TaskInputForm()
+
     if login_form.validate_on_submit():
         user = login_form.name.data
         session['name'] = user
@@ -64,63 +66,54 @@ def setting_page():
             session['known'] = False
         return redirect(url_for('setting_page'))
 
-    form = TaskInputForm()
-    is_task_title = False
-    is_set_time = False
+    not_task_title = False
+    not_set_time = False
 
-    if 'task_title' in session and 'set_time' in session:
-        set_task_title = session['task_title']
-    else:
-        set_task_title = ''
-    return render_template('setting.html',
-                            login_form=login_form,
-                            form=form,
-                            is_task_title=is_task_title,
-                            is_set_time=is_set_time,
-                            set_task_title=set_task_title,
-                            name=session.get('name', 'guest'),
-                            known=session.get('known', False),
-                            )
-
-@app.route('/todo', methods=['POST', 'GET'])
-def index():
     if request.method == 'POST':
         task_title = request.form["task_title"]
         hour = request.form["hour"]
         minute = request.form["minute"]
         set_time = 3600 * int(hour) + 60 * int(minute)
-
         # session
         session["task_title"] = task_title
         session["set_time"] = set_time
 
-        if not task_title or not set_time:
-            is_task_title = True
-            is_set_time = True
-            if task_title:
-                is_task_title = False
-            if set_time:
-                is_set_time = False
-            form = TaskInputForm()
+        if not task_title and not set_time:
+            not_task_title = True
+            not_set_time = True
+        elif not task_title:
+            not_task_title = True
+        elif not set_time:
+            not_set_time = True
+        else:
+            return redirect(url_for('index'))
 
-            set_task_title = session['task_title']
+    if 'task_title' in session and 'set_time' in session:
+        set_task_title = session['task_title']
+    else:
+        set_task_title = ''
 
-            return render_template('setting.html',
-                                    form=form,
-                                    is_task_title=is_task_title,
-                                    is_set_time=is_set_time,
-                                    set_task_title=set_task_title,
-                                    name=session.get('name', 'guest'),
-                                    known=session.get('known', False),
-                                    )
+    return render_template('setting.html',
+                            login_form=login_form,
+                            form=form,
+                            not_task_title=not_task_title,
+                            not_set_time=not_set_time,
+                            set_task_title=set_task_title,
+                            name=session.get('name', 'guest'),
+                            known=session.get('known', False),
+                            )
 
-        form = DoneForm()
-        return render_template('index.html',
-                                form=form,
-                                task_title=task_title,
-                                set_time=set_time,
-                                )
-    return redirect(url_for('setting_page'))
+@app.route('/todo')
+def index():
+    if not 'task_title' in session or not 'set_time' in session:
+        return redirect(url_for('setting_page'))
+
+    form = DoneForm()
+    return render_template('index.html',
+                            form=form,
+                            task_title=session["task_title"],
+                            set_time=session["set_time"],
+                            )
 
 @app.route('/done', methods=['POST', 'GET'])
 def done_page():

@@ -23,15 +23,15 @@
     <h2 style="color: #000">これは時間制限を設けて効率よく作業をこなすためのアプリです</h2>
     <h2 style="color: #000">タスク名と設定時間を決定し"設定！"をクリックorタップしてください</h2>
 
-    {% if is_task_title and is_set_time %}
+    {% if not_task_title and not_set_time %}
     <div id="task_title"><h2>タスク名と設定時間を決めてください</h2></div>
-    {% elif is_task_title %}
+    {% elif not_task_title %}
     <div id="task_title"><h2>タスク名も入力してください</h2></div>
-    {% elif is_set_time %}
+    {% elif not_set_time %}
     <div id="task_title"><h2>設定時間も決めてください</h2></div>
     {% endif %}
 
-    <form action="/todo" method="post" class="form-inline">
+    <form action="/" method="post" class="form-inline">
         <h2 style="color: black">
             {{ form.hidden_tag() }}
             {{ form.task_title.label }}{{ form.task_title(value=set_task_title, id='title_input') }}
