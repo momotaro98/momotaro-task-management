@@ -1,20 +1,28 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import os
+import logging
+import datetime
 from flask import Flask, session, render_template, request, redirect, url_for, flash
 from flask.ext.script import Manager
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
+from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
-import sys
-import logging
-import datetime
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
 app.config.update(dict(
     DEBUG = True,
     SECRET_KEY = 'hard to guess string',
+    SQLALCHEMY_DATABASE_URI =\
+       'sqlite:///' + os.path.join(basedir, 'data.sqlite'),
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True,
+    SQLALCHEMY_TRACK_MODIFICATIONS = True,
     MAIL_SERVER = 'smtp.gmail.com',
     MAIL_PORT = 587,
     MAIL_USE_TLS = True,
@@ -23,10 +31,33 @@ app.config.update(dict(
     MAIL_PASSWORD = 'ochaochaoishii9898',
 ))
 manager = Manager(app)
+db = SQLAlchemy(app)
 mail = Mail(app)
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
+
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+    users = db.relationship('User', backref='role', lazy='dynamic')
+    # backrefを記述することで、Userモデルにdb.relationship('role')が記述されたことと同じになる
+    # lazyはRoleに関係するアイテムがロードされるタイミングを指定するものらしい
+
+    def __repr__(self):
+        return '<Role {0}>'.format(self.name)
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    def __repr__(self):
+        return '<User {0}>'.format(self.username)
+
 
 class NameForm(Form):
     name = StringField('What is your name?', validators=[validators.Required()])

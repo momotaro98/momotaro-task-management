@@ -4,3 +4,4 @@
 venv
 *.swp
 .python-version
+*.sqlite

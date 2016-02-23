@@ -4,12 +4,14 @@ Flask==0.10.1
 Flask-Bootstrap==3.3.5.7
 Flask-Mail==0.9.1
 Flask-Script==2.0.5
+Flask-SQLAlchemy==2.1
 Flask-WTF==0.12
 gunicorn==19.3.0
 itsdangerous==0.24
 Jinja2==2.7.3
 MarkupSafe==0.23
 numpy==1.9.2
+SQLAlchemy==1.0.12
 visitor==0.1.2
 Werkzeug==0.10.4
 WTForms==2.1
