@@ -88,15 +88,20 @@ def setting_page():
     login_form = NameForm()
     form = TaskInputForm()
 
+    # ログイン機能
     if login_form.validate_on_submit():
-        user = login_form.name.data
-        session['name'] = user
-        if user == "momotaro":
-            session['known'] = True
-        else:
+        user = User.query.filter_by(username=login_form.name.data).first()
+        if user is None:
+            user = User(username=login_form.name.data) # rowインスタンスを作成
+            db.session.add(user)
             session['known'] = False
+        else:
+            session['known'] = True
+        session['name'] = login_form.name.data
         return redirect(url_for('setting_page'))
 
+
+    # タスク設定
     not_task_title = False
     not_set_time = False
 
