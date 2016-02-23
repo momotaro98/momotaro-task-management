@@ -6,6 +6,7 @@ import logging
 import datetime
 from flask import Flask, session, render_template, request, redirect, url_for, flash
 from flask.ext.script import Manager, Shell
+from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -13,33 +14,90 @@ from flask.ext.migrate import Migrate, MigrateCommand
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
 
+####### config.py 予定部分 start
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-app = Flask(__name__)
+class Config:
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_SSL = False
+    MAIL_USERNAME = 'ochatarodev98@gmail.com'
+    MAIL_PASSWORD = 'ochaochaoishii9898'
 
-app.config.update(dict(
-    DEBUG = True,
-    SECRET_KEY = 'hard to guess string',
-    SQLALCHEMY_DATABASE_URI =\
-       'sqlite:///' + os.path.join(basedir, 'data.sqlite'),
-    SQLALCHEMY_COMMIT_ON_TEARDOWN = True,
-    SQLALCHEMY_TRACK_MODIFICATIONS = True,
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 587,
-    MAIL_USE_TLS = True,
-    MAIL_SSL = False,
-    MAIL_USERNAME = 'ochatarodev98@gmail.com',
-    MAIL_PASSWORD = 'ochaochaoishii9898',
-))
+    @staticmethod
+    def init_app(app):
+        pass
+
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+
+
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+
+config = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig,
+
+    #'default': TestingConfig,
+    #'default': DevelopmentConfig,
+    'default': ProductionConfig,
+}
+####### config.py 予定部分 end
+
+####### app/__init__.py 予定部分 start
+bootstrap = Bootstrap()
+mail = Mail()
+db = SQLAlchemy()
+
+def create_app(config_name):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
+
+    bootstrap.init_app(app)
+    mail.init_app(app)
+    db.init_app(app)
+
+    # from .main import main as main_blueprint
+    # app.register_blueprint(main_blueprint)
+
+    return app
+####### app/__init__.py 予定部分 end
+
+
+####### manage.py 予定部分 start
+app = create_app(os.getenv('FLASK_CONFIG') or 'default') # os.getenv(環境変数)は環境変数が無いときはNonTypeClassが返る
 manager = Manager(app)
-db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-mail = Mail(app)
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
 app.logger.setLevel(logging.ERROR)
 
+# コマンドラインで実行する際にいちいちimportしないようにする処理
+def make_shell_context():
+    return dict(app=app, db=db, User=User, Role=Role)
+manager.add_command("shell", Shell(make_context=make_shell_context))
+manager.add_command("db", MigrateCommand)
+####### manage.py 予定部分 end
 
+
+####### app/models.py 予定部分 start
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -59,8 +117,10 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {0}>'.format(self.username)
+####### app/models.py 予定部分 end
 
 
+####### forms.py 予定部分 start
 class NameForm(Form):
     name = StringField('What is your name?', validators=[validators.Required()])
     submit = SubmitField('Submit')
@@ -83,13 +143,7 @@ class DoneForm(Form):
     Minutes = HiddenField('')
     remained_time = HiddenField('')
     serial_passed_time = HiddenField('')
-
-
-# コマンドラインで実行する際にいちいちimportしないようにする処理
-def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role)
-manager.add_command("shell", Shell(make_context=make_shell_context))
-manager.add_command("db", MigrateCommand)
+####### forms.py 予定部分 end
 
 
 @app.errorhandler(404)
