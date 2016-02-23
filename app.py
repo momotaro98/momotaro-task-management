@@ -9,6 +9,7 @@ from flask.ext.script import Manager, Shell
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.migrate import Migrate, MigrateCommand
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
 
@@ -32,6 +33,7 @@ app.config.update(dict(
 ))
 manager = Manager(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 mail = Mail(app)
 
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
@@ -87,6 +89,7 @@ class DoneForm(Form):
 def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role)
 manager.add_command("shell", Shell(make_context=make_shell_context))
+manager.add_command("db", MigrateCommand)
 
 
 @app.errorhandler(404)
