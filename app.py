@@ -5,7 +5,7 @@ import os
 import logging
 import datetime
 from flask import Flask, session, render_template, request, redirect, url_for, flash
-from flask.ext.script import Manager
+from flask.ext.script import Manager, Shell
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -81,6 +81,21 @@ class DoneForm(Form):
     Minutes = HiddenField('')
     remained_time = HiddenField('')
     serial_passed_time = HiddenField('')
+
+
+# コマンドラインで実行する際にいちいちimportしないようにする処理
+def make_shell_context():
+    return dict(app=app, db=db, User=User, Role=Role)
+manager.add_command("shell", Shell(make_context=make_shell_context))
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
 
 @app.route('/', methods=['POST', 'GET'])
