@@ -54,9 +54,9 @@ config = {
     'testing': TestingConfig,
     'production': ProductionConfig,
 
+    'default': DevelopmentConfig,
     #'default': TestingConfig,
-    #'default': DevelopmentConfig,
-    'default': ProductionConfig,
+    #'default': ProductionConfig,
 }
 ####### config.py 予定部分 end
 
@@ -94,6 +94,14 @@ def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command("db", MigrateCommand)
+
+
+@manager.command # `python app.py test` で実行できるようになるデコレータ
+def test():
+    """Run the unit test."""
+    import unittest
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner(verbosity=2).run(tests)
 ####### manage.py 予定部分 end
 
 
