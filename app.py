@@ -13,6 +13,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.migrate import Migrate, MigrateCommand
 from flask.ext.mail import Mail
 from flask.ext.mail import Message
+from werkzeug.security import generate_password_hash, check_password_hash
 
 ####### config.py 予定部分 start
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -122,6 +123,19 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    password_hash = db.Column(db.String(128))
+
+    @property
+    def password(self):
+        # passwordにはアクセスできないよとうエラーを発生させる
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password): # パスワードが設定されるとき(代入されるとき)に実行する
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
         return '<User {0}>'.format(self.username)
@@ -173,7 +187,7 @@ def setting_page():
         user = User.query.filter_by(username=login_form.name.data).first()
         if user is None:
             user = User(username=login_form.name.data) # rowインスタンスを作成
-            db.session.add(user)
+            # db.session.add(user)
             session['known'] = False
         else:
             session['known'] = True
