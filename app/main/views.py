@@ -1,145 +1,14 @@
-# -*- coding: utf-8 -*-
-
-import sys
-import os
-import logging
-import datetime
-from flask import Flask, session, render_template, request, redirect, url_for, flash
-from flask.ext.script import Manager, Shell
-from flask.ext.bootstrap import Bootstrap
+from flask import request, render_template, session, redirect, url_for, current_app
+from .. import db
+from ..models import User
+from . import main
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.migrate import Migrate, MigrateCommand
-from flask.ext.mail import Mail
 from flask.ext.mail import Message
-from werkzeug.security import generate_password_hash, check_password_hash
+import datetime
 
-####### config.py 予定部分 start
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
-    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-    SQLALCHEMY_TRACK_MODIFICATIONS = True
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 587
-    MAIL_USE_TLS = True
-    MAIL_SSL = False
-    MAIL_USERNAME = 'ochatarodev98@gmail.com'
-    MAIL_PASSWORD = 'ochaochaoishii9898'
-
-    @staticmethod
-    def init_app(app):
-        pass
-
-
-class DevelopmentConfig(Config):
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
-
-
-class TestingConfig(Config):
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
-
-
-class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-
-config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
-
-    'default': DevelopmentConfig,
-    #'default': TestingConfig,
-    #'default': ProductionConfig,
-}
-####### config.py 予定部分 end
-
-####### app/__init__.py 予定部分 start
-bootstrap = Bootstrap()
-mail = Mail()
-db = SQLAlchemy()
-
-def create_app(config_name):
-    app = Flask(__name__)
-    app.config.from_object(config[config_name])
-    config[config_name].init_app(app)
-
-    bootstrap.init_app(app)
-    mail.init_app(app)
-    db.init_app(app)
-
-    # from .main import main as main_blueprint
-    # app.register_blueprint(main_blueprint)
-
-    return app
-####### app/__init__.py 予定部分 end
-
-
-####### manage.py 予定部分 start
-app = create_app(os.getenv('FLASK_CONFIG') or 'default') # os.getenv(環境変数)は環境変数が無いときはNonTypeClassが返る
-manager = Manager(app)
-migrate = Migrate(app, db)
-
-app.logger.addHandler(logging.StreamHandler(sys.stdout))
-app.logger.setLevel(logging.ERROR)
-
-# コマンドラインで実行する際にいちいちimportしないようにする処理
-def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role)
-manager.add_command("shell", Shell(make_context=make_shell_context))
-manager.add_command("db", MigrateCommand)
-
-
-@manager.command # `python app.py test` で実行できるようになるデコレータ
-def test():
-    """Run the unit test."""
-    import unittest
-    tests = unittest.TestLoader().discover('tests')
-    unittest.TextTestRunner(verbosity=2).run(tests)
-####### manage.py 予定部分 end
-
-
-####### app/models.py 予定部分 start
-class Role(db.Model):
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
-    users = db.relationship('User', backref='role', lazy='dynamic')
-    # backrefを記述することで、Userモデルにdb.relationship('role')が記述されたことと同じになる
-    # lazyはRoleに関係するアイテムがロードされるタイミングを指定するものらしい
-
-    def __repr__(self):
-        return '<Role {0}>'.format(self.name)
-
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, index=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-    password_hash = db.Column(db.String(128))
-
-    @property
-    def password(self):
-        # passwordにはアクセスできないよとうエラーを発生させる
-        raise AttributeError('password is not a readable attribute')
-
-    @password.setter
-    def password(self, password): # パスワードが設定されるとき(代入されるとき)に実行する
-        self.password_hash = generate_password_hash(password)
-
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    def __repr__(self):
-        return '<User {0}>'.format(self.username)
-####### app/models.py 予定部分 end
+from . import main
+from .. import mail
 
 
 ####### forms.py 予定部分 start
@@ -168,16 +37,16 @@ class DoneForm(Form):
 ####### forms.py 予定部分 end
 
 
-@app.errorhandler(404)
+@main.app_errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
-@app.errorhandler(500)
+@main.app_errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
 
 
-@app.route('/', methods=['POST', 'GET'])
+@main.route('/', methods=['POST', 'GET'])
 def setting_page():
     login_form = NameForm()
     form = TaskInputForm()
@@ -192,7 +61,7 @@ def setting_page():
         else:
             session['known'] = True
         session['name'] = login_form.name.data
-        return redirect(url_for('setting_page'))
+        return redirect(url_for('.setting_page'))
 
 
     # タスク設定
@@ -216,7 +85,7 @@ def setting_page():
         elif not set_time:
             not_set_time = True
         else:
-            return redirect(url_for('index'))
+            return redirect(url_for('.index'))
 
     if 'task_title' in session and 'set_time' in session:
         set_task_title = session['task_title']
@@ -233,10 +102,10 @@ def setting_page():
                             known=session.get('known', False),
                             )
 
-@app.route('/todo')
+@main.route('/todo')
 def index():
     if not 'task_title' in session or not 'set_time' in session:
-        return redirect(url_for('setting_page'))
+        return redirect(url_for('.setting_page'))
 
     form = DoneForm()
     return render_template('index.html',
@@ -245,7 +114,7 @@ def index():
                             set_time=session["set_time"],
                             )
 
-@app.route('/done', methods=['POST', 'GET'])
+@main.route('/done', methods=['POST', 'GET'])
 def done_page():
     if request.method == 'POST':
         task_title = session["task_title"] # タスク名
@@ -329,6 +198,7 @@ def done_page():
 
             # Send Mail
             try:
+                app = current_app._get_current_object()
                 with app.app_context():
                     mail.send(msg)
             except:
@@ -351,8 +221,4 @@ def done_page():
                             mail_address=mail_address,
                             )
 
-    return redirect(url_for('setting_page'))
-
-if __name__ == '__main__':
-    manager.run()
-    # app.run(host='127.0.0.1')
+    return redirect(url_for('.setting_page'))
