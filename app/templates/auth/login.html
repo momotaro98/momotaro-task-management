@@ -1,9 +1,13 @@
 {% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Task Do App - Login{% endblock %}
 
 {% block content %}
 <div class="page-header">
     <h1>Login<h1>
+</div>
+<div class="col-md-4">
+    {{ wtf.quick_form(form) }}
 </div>
 {% endblock %}

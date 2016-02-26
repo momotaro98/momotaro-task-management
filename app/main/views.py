@@ -12,10 +12,6 @@ from .. import mail
 
 
 ####### forms.py 予定部分 start
-class NameForm(Form):
-    name = StringField('What is your name?', validators=[validators.Required()])
-    submit = SubmitField('Submit')
-
 class TaskInputForm(Form):
     task_title = StringField('タスク名: ')
     hour = SelectField('時間', choices=[(i, i) for i in range(0, 6)])
@@ -48,22 +44,7 @@ def internal_server_error(e):
 
 @main.route('/', methods=['POST', 'GET'])
 def setting_page():
-    login_form = NameForm()
     form = TaskInputForm()
-
-    # ログイン機能
-    if login_form.validate_on_submit():
-        user = User.query.filter_by(username=login_form.name.data).first()
-        if user is None:
-            user = User(username=login_form.name.data) # rowインスタンスを作成
-            # db.session.add(user)
-            session['known'] = False
-        else:
-            session['known'] = True
-        session['name'] = login_form.name.data
-        return redirect(url_for('.setting_page'))
-
-
     # タスク設定
     not_task_title = False
     not_set_time = False
@@ -93,7 +74,6 @@ def setting_page():
         set_task_title = ''
 
     return render_template('setting.html',
-                            login_form=login_form,
                             form=form,
                             not_task_title=not_task_title,
                             not_set_time=not_set_time,

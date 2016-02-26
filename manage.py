@@ -20,7 +20,6 @@ app.logger.setLevel(logging.ERROR)
 
 # コマンドラインで実行する際にいちいちimportしないようにする処理
 def make_shell_context():
-    from models import Role, User
     return dict(app=app, db=db, User=User, Role=Role)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command("db", MigrateCommand)
