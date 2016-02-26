@@ -2,8 +2,8 @@
 
 {% block title %}{{ task_title }} 実行結果{% endblock %}
 
-{% block content %}
-<div id="container">
+{% block page_content %}
+<div id="org_container">
     {% if send_mail_or_not %}
         {% if mail_success_flag %}
         <h2 style="color:black">{{ mail_address }} へメールを送信しました</h2>
