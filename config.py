@@ -12,6 +12,9 @@ class Config:
     MAIL_SSL = False
     MAIL_USERNAME = 'ochatarodev98@gmail.com'
     MAIL_PASSWORD = 'ochaochaoishii9898'
+    APP_MAIL_SUBJECT_PREFIX = '[Task Do App]'
+    APP_MAIL_SENDER = 'Task Do App Admin <ochatarodev98@gmail.com>'
+    APP_ADMIN = os.environ.get('APP_ADMIN')
 
     @staticmethod
     def init_app(app):

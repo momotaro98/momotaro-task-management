@@ -7,7 +7,7 @@ from wtforms import ValidationError
 from . import auth
 from .. import db
 from ..models import User
-# from ..email import send_email # emailディレクトリは作成予定
+from ..email import send_email # emailディレクトリは作成予定
 
 
 class LoginForm(Form):
@@ -40,6 +40,25 @@ class RegistrationForm(Form):
             raise ValidationError('Username already in use.')
 
 
+# 認証されていない状態でLogInしようとすると条件にマッチして
+# auth.confirmedのURLにリダイレクトするのだが、
+# 理由がわからない。
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated \
+            and not current_user.confirmed \
+            and request.endpoint[:5] != 'auth.' \
+            and request.endpoint != 'static':
+        return redirect(url_for('auth.unconfirmed'))
+
+
+@auth.route('/unconfirmed')
+def unconfirmed():
+    if current_user.is_anonymous or current_user.confirmed:
+        return redirect(url_for('main.setting_page'))
+    return render_template('auth/unconfirmed.html')
+
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -68,7 +87,36 @@ def register():
         user = User(email=form.email.data,
                     username=form.username.data,
                     password=form.password.data)
+        # 認証を確認する前にユーザ名とアドレスとパスワードはデータベースに登録する
+        # これから認証をしてくださいのページを表示するためにもこのようにする
         db.session.add(user)
-        flash('You can now login.')
+        db.session.commit()
+        token = user.generate_confirmation_token()
+        send_email(user.email, 'Confirm Your Account',
+                'auth/email/confirm', user=user, token=token)
+        flash('A confirmation email has beeen sent to you by email.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
+
+
+# 送ったメールについているリンク
+@auth.route('/confirm/<token>')
+@login_required
+def confirm(token):
+    if current_user.confirmed:
+        return redirect(url_for('main.setting_page'))
+    if current_user.confirm(token):
+        flash('You have confirmed your account. Thanks!')
+    else:
+        flash('The confirmation link is invalid or has expired.')
+    return redirect(url_for('main.setting_page'))
+
+
+@auth.route('/confirm')
+@login_required
+def resend_confirmation():
+    token = current_user.generate_confirmation_token()
+    send_email(current_user.email, 'Confirm Your Account',
+               'auth/email/confirm', user=current_user, token=token)
+    flash('A new confirmation email has been sent to you by email.')
+    return redirect(url_for('main.setting_page'))
