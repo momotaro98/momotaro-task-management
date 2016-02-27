@@ -1,0 +1,41 @@
+タスク名 "{{ task_title }}"
+
+実行日 {{ done_datetime.year }}年{{ done_datetime.month }}月{{ done_datetime.day }}日
+
+{% if set_hour and set_minute %}
+<h2>設定時間 {{ set_hour }} 時間 {{ set_minute }} 分
+{% elif set_hour %}
+設定時間 {{ set_hour }} 時間
+{% else %}
+設定時間 {{ set_minute }} 分
+{% endif %}
+
+{% if start_minute<10 %}
+開始時刻 {{ start_hour }}:0{{ start_minute }}
+{% else %}
+開始時刻 {{ start_hour }}:{{ start_minute }}
+{% endif %}
+
+{% if done_datetime.minute<10 %}
+終了時刻 {{ done_datetime.hour }}:0{{ done_datetime.minute }}
+{% else %}
+終了時刻 {{ done_datetime.hour }}:{{ done_datetime.minute }}
+{% endif %}
+
+{% if serial_passed_hour %}
+実行時間 {{ serial_passed_hour }} 時間 {{ serial_passed_minute }} 分
+{% else %}
+実行時間 {{ serial_passed_minute }} 分
+{% endif %}
+
+{% if over_time>0 %}
+{% if over_hour and over_minute %}
+超過時間 {{ over_hour }} 時間 {{ over_minute }} 分
+{% elif over_hour %}
+超過時間 {{ over_hour }} 時間
+{% else %}
+超過時間 {{ over_minute }} 分
+{% endif %}
+{% else %}
+設定時間内に実行完了！
+{% endif %}

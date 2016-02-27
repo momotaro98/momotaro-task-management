@@ -6,11 +6,11 @@
 <div id="org_container">
     {% if send_mail_or_not %}
         {% if mail_success_flag %}
-        <h2 style="color:black">{{ mail_address }} へメールを送信しました</h2>
+        <h2 style="color:black">メールを送信しました</h2>
         {% else %}
         <h2 style="color:red">メールの送信に失敗しました</h2>
             {% if mail_address %}
-            <h2 style="color:black">入力メールアドレス: {{ mail_address }}</h2>
+            <h2 style="color:black">送信先メールアドレス: {{ mail_address }}</h2>
             {% else %}
             <h2 style="color:black">入力メールアドレス: なし</h2>
             {% endif %}
