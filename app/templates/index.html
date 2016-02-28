@@ -44,6 +44,11 @@
                 {{ form.send_mail_or_not.label }}
                 {{ form.send_mail_or_not() }}
             </p>
+            {% if not current_user.is_authenticated %}
+                <p style="color: black">
+                    注: 実行結果メール送信機能はログイン時のみ有効です
+                </p>
+            {% endif %}
             {{ form.submit(id='doneButton') }}
         </form>
     </div>

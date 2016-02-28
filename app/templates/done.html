@@ -8,12 +8,12 @@
         {% if mail_success_flag %}
             <h2 style="color:black">メールを送信しました</h2>
         {% else %}
-            <h2 style="color:red">メールの送信に失敗しました</h2>
-                {% if mail_address %}
-                    <h2 style="color:black">送信先メールアドレス: {{ mail_address }}</h2>
-                {% else %}
-                    <h2 style="color:black">入力メールアドレス: なし</h2>
-                {% endif %}
+            {% if mail_address %}
+                <h2 style="color:black">メールの送信に失敗しました</h2>
+                <h2 style="color:black">送信先メールアドレス: {{ mail_address }}</h2>
+            {% else %}
+                <h2 style="color:black">メール送信機能を利用するにはユーザ登録・ログインをお願いします</h2>
+            {% endif %}
         {% endif %}
     {% endif %}
     <div id="header">

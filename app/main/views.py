@@ -23,6 +23,7 @@ class DoneForm(Form):
     send_mail_or_not = SelectField(
             '実行結果をメールしますか:',
             choices=[('no', 'いいえ'), ('yes', 'はい')],
+            default='no',
             )
     Hours = HiddenField('')
     Minutes = HiddenField('')
@@ -116,24 +117,29 @@ def done_page():
         over_minute = (over_time % 3600) // 60
 
         # Mail Sending
+        send_to_mail_address = current_user.email if current_user.is_authenticated else ''
+
         if send_mail_or_not:
-            try:
-                # 関数send_emailの引数
-                # def send_email(to, subject, template, **kwargs):
-                send_email(current_user.email, task_title, 'mail/task_done',
-                                task_title=task_title,
-                                done_datetime=done_datetime,
-                                set_hour=set_hour,
-                                set_minute=set_minute,
-                                start_hour=start_hour,
-                                start_minute=start_minute,
-                                serial_passed_hour=serial_passed_hour,
-                                serial_passed_minute=serial_passed_minute,
-                                over_time=over_time,
-                                over_hour=over_hour,
-                                over_minute=over_minute,
-                                )
-            except:
+            if send_to_mail_address:
+                try:
+                    # 関数send_emailの引数
+                    # def send_email(to, subject, template, **kwargs):
+                    send_email(send_to_mail_address, task_title, 'mail/task_done',
+                                    task_title=task_title,
+                                    done_datetime=done_datetime,
+                                    set_hour=set_hour,
+                                    set_minute=set_minute,
+                                    start_hour=start_hour,
+                                    start_minute=start_minute,
+                                    serial_passed_hour=serial_passed_hour,
+                                    serial_passed_minute=serial_passed_minute,
+                                    over_time=over_time,
+                                    over_hour=over_hour,
+                                    over_minute=over_minute,
+                                    )
+                except:
+                    mail_success_flag = False
+            else:
                 mail_success_flag = False
 
         return render_template('done.html',
@@ -150,7 +156,7 @@ def done_page():
                             over_minute=over_minute,
                             send_mail_or_not=send_mail_or_not,
                             mail_success_flag=mail_success_flag,
-                            mail_address=current_user.email,
+                            mail_address=send_to_mail_address,
                             )
 
     return redirect(url_for('.setting_page'))
