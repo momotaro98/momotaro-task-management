@@ -115,10 +115,10 @@ def done_page():
         over_hour = over_time // 3600
         over_minute = (over_time % 3600) // 60
 
-        ''' Mail Sending '''
+        # Mail Sending
         if send_mail_or_not:
             try:
-                # 参照先の関数の定義
+                # 関数send_emailの引数
                 # def send_email(to, subject, template, **kwargs):
                 send_email(current_user.email, task_title, 'mail/task_done',
                                 task_title=task_title,

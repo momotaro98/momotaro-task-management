@@ -3,7 +3,7 @@
 実行日 {{ done_datetime.year }}年{{ done_datetime.month }}月{{ done_datetime.day }}日
 
 {% if set_hour and set_minute %}
-<h2>設定時間 {{ set_hour }} 時間 {{ set_minute }} 分
+設定時間 {{ set_hour }} 時間 {{ set_minute }} 分
 {% elif set_hour %}
 設定時間 {{ set_hour }} 時間
 {% else %}
@@ -29,13 +29,11 @@
 {% endif %}
 
 {% if over_time>0 %}
-{% if over_hour and over_minute %}
+    {% if over_hour>0 %}
 超過時間 {{ over_hour }} 時間 {{ over_minute }} 分
-{% elif over_hour %}
-超過時間 {{ over_hour }} 時間
-{% else %}
+    {% else %}
 超過時間 {{ over_minute }} 分
-{% endif %}
+    {% endif %}
 {% else %}
 設定時間内に実行完了！
 {% endif %}

@@ -6,14 +6,14 @@
 <div id="org_container">
     {% if send_mail_or_not %}
         {% if mail_success_flag %}
-        <h2 style="color:black">メールを送信しました</h2>
+            <h2 style="color:black">メールを送信しました</h2>
         {% else %}
-        <h2 style="color:red">メールの送信に失敗しました</h2>
-            {% if mail_address %}
-            <h2 style="color:black">送信先メールアドレス: {{ mail_address }}</h2>
-            {% else %}
-            <h2 style="color:black">入力メールアドレス: なし</h2>
-            {% endif %}
+            <h2 style="color:red">メールの送信に失敗しました</h2>
+                {% if mail_address %}
+                    <h2 style="color:black">送信先メールアドレス: {{ mail_address }}</h2>
+                {% else %}
+                    <h2 style="color:black">入力メールアドレス: なし</h2>
+                {% endif %}
         {% endif %}
     {% endif %}
     <div id="header">
@@ -27,41 +27,39 @@
         <h2>タスク名 "{{ task_title }}"</h2>
 
         {% if set_hour and set_minute %}
-        <h2>設定時間 {{ set_hour }} 時間 {{ set_minute }} 分</h2>
+            <h2>設定時間 {{ set_hour }} 時間 {{ set_minute }} 分</h2>
         {% elif set_hour %}
-        <h2>設定時間 {{ set_hour }} 時間</h2>
+            <h2>設定時間 {{ set_hour }} 時間</h2>
         {% else %}
-        <h2>設定時間 {{ set_minute }} 分</h2>
+            <h2>設定時間 {{ set_minute }} 分</h2>
         {% endif %}
 
         {% if start_minute<10 %}
-        <h2>開始時刻 {{ start_hour }}:0{{ start_minute }}</h2>
+            <h2>開始時刻 {{ start_hour }}:0{{ start_minute }}</h2>
         {% else %}
-        <h2>開始時刻 {{ start_hour }}:{{ start_minute }}</h2>
+            <h2>開始時刻 {{ start_hour }}:{{ start_minute }}</h2>
         {% endif %}
 
         {% if done_datetime.minute<10 %}
-        <h2>終了時刻 {{ done_datetime.hour }}:0{{ done_datetime.minute }}</h2>
+            <h2>終了時刻 {{ done_datetime.hour }}:0{{ done_datetime.minute }}</h2>
         {% else %}
-        <h2>終了時刻 {{ done_datetime.hour }}:{{ done_datetime.minute }}</h2>
+            <h2>終了時刻 {{ done_datetime.hour }}:{{ done_datetime.minute }}</h2>
         {% endif %}
 
         {% if serial_passed_hour %}
-        <h2>実行時間 {{ serial_passed_hour }} 時間 {{ serial_passed_minute }} 分</h2>
+            <h2>実行時間 {{ serial_passed_hour }} 時間 {{ serial_passed_minute }} 分</h2>
         {% else %}
-        <h2>実行時間 {{ serial_passed_minute }} 分</h2>
+            <h2>実行時間 {{ serial_passed_minute }} 分</h2>
         {% endif %}
 
         {% if over_time>0 %}
-        {% if over_hour and over_minute %}
-        <h2>超過時間 {{ over_hour }} 時間 {{ over_minute }} 分</h2>
-        {% elif over_hour %}
-        <h2>超過時間 {{ over_hour }} 時間</h2>
+            {% if over_hour>0 %}
+                <h2>超過時間 {{ over_hour }} 時間 {{ over_minute }} 分</h2>
+            {% else %}
+                <h2>超過時間 {{ over_minute }} 分</h2>
+            {% endif %}
         {% else %}
-        <h2>超過時間 {{ over_minute }} 分</h2>
-        {% endif %}
-        {% else %}
-        <h2>設定時間内に実行完了！</h2>
+            <h2>設定時間内に実行完了！</h2>
         {% endif %}
     </div>
     <div class="Button" id="backButton">

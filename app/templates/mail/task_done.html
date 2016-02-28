@@ -29,13 +29,11 @@
 {% endif %}
 
 {% if over_time>0 %}
-{% if over_hour and over_minute %}
+    {% if over_hour>0 %}
 <h2>超過時間 {{ over_hour }} 時間 {{ over_minute }} 分</h2>
-{% elif over_hour %}
-<h2>超過時間 {{ over_hour }} 時間</h2>
-{% else %}
+    {% else %}
 <h2>超過時間 {{ over_minute }} 分</h2>
-{% endif %}
+    {% endif %}
 {% else %}
 <h2>設定時間内に実行完了！</h2>
 {% endif %}
