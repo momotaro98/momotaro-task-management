@@ -15,7 +15,11 @@ class BasicsTestCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_app_exists(self):
+        '''current_appが正しく生成されるかのテスト
+        '''
         self.assertFalse(current_app is None)
 
     def test_app_is_testing(self):
+        '''テスト用の設定としてアプリケーションコンテキストが生成されているか確認
+        '''
         self.assertTrue(current_app.config['TESTING'])
