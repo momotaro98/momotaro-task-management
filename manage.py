@@ -32,6 +32,14 @@ def test():
     tests = unittest.TestLoader().discover('tests')
     unittest.TextTestRunner(verbosity=2).run(tests)
 
+@manager.command
+def deploy():
+    """Run deployment tasks."""
+    from flask.ext.migrate import upgrade
+    from app.models import Role, User
+
+    # データベースを最新revisionにマイグレート
+    upgrade()
 
 if __name__ == '__main__':
     manager.run()
