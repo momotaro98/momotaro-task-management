@@ -36,7 +36,6 @@ def test():
 def deploy():
     """Run deployment tasks."""
     from flask.ext.migrate import upgrade
-    from app.models import Role, User
 
     # データベースを最新revisionにマイグレート
     upgrade()
