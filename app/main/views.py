@@ -1,6 +1,6 @@
 from flask import request, render_template, session, redirect, url_for, current_app, abort
 from .. import db
-from ..models import User
+from ..models import User, Task
 from . import main
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
@@ -116,6 +116,14 @@ def done_page():
         over_hour = over_time // 3600
         over_minute = (over_time % 3600) // 60
 
+        # Done Task Registration
+        task = Task(task_title=task_title,
+                    set_time=set_time,
+                    remained_time=remained_time,
+                    serial_passed_time=serial_passed_time,
+                    user=current_user._get_current_object())
+        db.session.add(task)
+
         # Mail Sending
         send_to_mail_address = current_user.email if current_user.is_authenticated else ''
 
@@ -165,4 +173,5 @@ def done_page():
 @main.route('/user/<username>')
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', user=user)
+    tasks = user.tasks.order_by(Task.timestamp.desc()).all()
+    return render_template('user.html', user=user, tasks=tasks)
