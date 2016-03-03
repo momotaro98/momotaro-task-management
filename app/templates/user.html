@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>{{ user.username }}</h1>
+    <p>Email: {{ user.username }}</p>
+    <p>Member since {{ user.member_since }}. Last seen {{ user.last_seen }}</p>
+</div>
+{% endblock %}

@@ -1,3 +1,4 @@
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
@@ -25,7 +26,10 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
 
+    # propertyでself.passwordを管理する
     @property
     def password(self):
         # passwordにはアクセスできないよとうエラーを発生させる
@@ -56,6 +60,9 @@ class User(UserMixin, db.Model):
         db.session.add(self) # confirmedされたことをデータベースへ更新する
         return True
 
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
 
     def __repr__(self):
         return '<User {0}>'.format(self.username)
