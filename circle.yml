@@ -1,0 +1,9 @@
+machine:
+  timezone:
+    Asia/Tokyo
+  python:
+    version: 3.4.3
+
+test:
+  override:
+    - python manage.py test
