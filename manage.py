@@ -25,7 +25,7 @@ manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command("db", MigrateCommand)
 
 
-@manager.command # `python app.py test` で実行できるようになるデコレータ
+@manager.command # `python manage.py test` で実行できるようになるデコレータ
 def test():
     """Run the unit test."""
     import unittest
