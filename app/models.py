@@ -1,3 +1,4 @@
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
@@ -10,7 +11,8 @@ class Role(db.Model):
     name = db.Column(db.String(64), unique=True)
     users = db.relationship('User', backref='role', lazy='dynamic')
     # backrefを記述することで、Userモデルにdb.relationship('role')が記述されたことと同じになる
-    # lazyはRoleに関係するアイテムがロードされるタイミングを指定するものらしい
+    # TODO lazyはRoleに関係するアイテムがロードされるタイミングを指定するものらしい
+    # が、よく理解できていない
 
     def __repr__(self):
         return '<Role {0}>'.format(self.name)
@@ -25,7 +27,11 @@ class User(UserMixin, db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
+    member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+    tasks = db.relationship('Task', backref='user', lazy='dynamic')
 
+    # propertyでself.passwordを管理する
     @property
     def password(self):
         # passwordにはアクセスできないよとうエラーを発生させる
@@ -56,9 +62,22 @@ class User(UserMixin, db.Model):
         db.session.add(self) # confirmedされたことをデータベースへ更新する
         return True
 
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
 
     def __repr__(self):
         return '<User {0}>'.format(self.username)
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    task_title = db.Column(db.String(128))
+    set_time = db.Column(db.Integer) # 設定時間 秒数
+    remained_time = db.Column(db.Integer) # 残り時間 秒数
+    serial_passed_time = db.Column(db.Integer) # 経過時間 秒数
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 # 何かしらの処理の度にセッションにおけるユーザを再ロードするためのコールバック関数

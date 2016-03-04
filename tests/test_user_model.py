@@ -1,5 +1,6 @@
 import unittest
 import time
+from datetime import datetime
 from app import create_app, db
 from app.models import User
 
@@ -80,3 +81,25 @@ class UserModelTestCase(unittest.TestCase):
         token = u.generate_confirmation_token(1)
         time.sleep(2)
         self.assertFalse(u.confirm(token))
+
+    def test_timestamps(self):
+        '''新規ユーザ作成時にUser.member_sinceとUser.last_seenにデフォルト値が正しく入っているかのテスト
+        '''
+        u = User(password='cat')
+        db.session.add(u)
+        db.session.commit()
+        self.assertTrue(
+                (datetime.utcnow() - u.member_since).total_seconds() < 3)
+        self.assertTrue(
+                (datetime.utcnow() - u.last_seen).total_seconds() < 3)
+
+    def test_ping(self):
+        '''User.ping()メソッドが正しく動作するかテスト
+        '''
+        u = User(password='cat')
+        db.session.add(u)
+        db.session.commit()
+        time.sleep(2)
+        last_seen_before = u.last_seen
+        u.ping()
+        self.assertTrue(u.last_seen > last_seen_before)

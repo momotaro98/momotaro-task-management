@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}{{ user.username }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>{{ user.username }}</h1>
+    <p>Email: {{ user.username }}</p>
+    <p>Member since {{ user.member_since }}. Last seen {{ user.last_seen }}</p>
+    <h2>About Done Tasks</h2>
+    {% for task in tasks %}
+        <p>tasks.task_title: {{ task.task_title }}</p>
+        <p>tasks.timestamp: {{ task.timestamp }}</p>
+        <p>tasks.set_time: {{ task.set_time }}</p>
+        <p>tasks.remained_time: {{ task.remained_time }}</p>
+        <p>tasks.serial_passed_time: {{ task.serial_passed_time }}</p>
+        <p>tasks.user_id: {{ task.user_id }}</p>
+    {% endfor %}
+</div>
+{% endblock %}
