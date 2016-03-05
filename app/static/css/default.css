@@ -121,6 +121,13 @@ h3 {
     font-size: 30px;
 }
 
+.view_task{
+    margin: 0 auto;
+    width: 90%;
+    background-color: #fff;
+    border-radius: 15px;
+}
+
 #done_elements{
     margin: 0 auto;
     width: 80%;

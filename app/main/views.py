@@ -116,13 +116,14 @@ def done_page():
         over_hour = over_time // 3600
         over_minute = (over_time % 3600) // 60
 
-        # Done Task Registration
-        task = Task(task_title=task_title,
-                    set_time=set_time,
-                    remained_time=remained_time,
-                    serial_passed_time=serial_passed_time,
-                    user=current_user._get_current_object())
-        db.session.add(task)
+        if current_user.is_authenticated:
+            # Done Task Registration
+            task = Task(task_title=task_title,
+                        set_time=set_time,
+                        remained_time=remained_time,
+                        serial_passed_time=serial_passed_time,
+                        user=current_user._get_current_object())
+            db.session.add(task)
 
         # Mail Sending
         send_to_mail_address = current_user.email if current_user.is_authenticated else ''
