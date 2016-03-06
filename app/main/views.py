@@ -174,5 +174,13 @@ def done_page():
 @main.route('/user/<username>')
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    tasks = user.tasks.order_by(Task.timestamp.desc()).all()
-    return render_template('user.html', user=user, tasks=tasks)
+    # delete
+    # tasks = user.tasks.order_by(Task.timestamp.desc()).all()
+    # return render_template('user.html', user=user, tasks=tasks)
+    page = request.args.get('page', 1, type=int)
+    pagination = user.tasks.order_by(Task.timestamp.desc()).paginate(
+        page, per_page=current_app.config['APP_POSTS_PER_PAGE'],
+        error_out=False)
+    tasks = pagination.items
+    return render_template('user.html', user=user, tasks=tasks,
+                           pagination=pagination)

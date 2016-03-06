@@ -1,10 +1,11 @@
 {% extends "layout.html" %}
+{% import "_macros.html" as macros %}
 {% block title %}{{ user.username }}{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
     <h1>{{ user.username }}</h1>
-    <p>Email: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
     <p>Member since {{ user.member_since }}. Last seen {{ user.last_seen }}</p>
 </div>
 <h2>Your Done Tasks</h2>
@@ -18,4 +19,9 @@
         <!--<p>tasks.user_id: {{ task.user_id }}</p>-->
     </div>
 {% endfor %}
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
+</div>
+{% endif %}
 {% endblock %}

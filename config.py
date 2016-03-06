@@ -16,6 +16,7 @@ class Config:
     APP_MAIL_SUBJECT_PREFIX = '[Task Do App]'
     APP_MAIL_SENDER = 'Task Do App Admin <task.do.app@exmple.com>'
     APP_ADMIN = os.environ.get('APP_ADMIN')
+    APP_POSTS_PER_PAGE = 10
 
     @staticmethod
     def init_app(app):
