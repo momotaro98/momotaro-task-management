@@ -30,6 +30,7 @@ class User(UserMixin, db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     tasks = db.relationship('Task', backref='user', lazy='dynamic')
+    goals = db.relationship('Goal', backref='user', lazy='dynamic')
 
     # propertyでself.passwordを管理する
     @property
@@ -69,6 +70,7 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User {0}>'.format(self.username)
 
+
 class Task(db.Model):
     __tablename__ = 'tasks'
     id = db.Column(db.Integer, primary_key=True)
@@ -78,6 +80,16 @@ class Task(db.Model):
     remained_time = db.Column(db.Integer) # 残り時間 秒数
     serial_passed_time = db.Column(db.Integer) # 経過時間 秒数
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'))
+
+
+class Goal(db.Model):
+    __tablename__ = 'goals'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    goal_name = db.Column(db.String(64))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    tasks = db.relationship('Task', backref='goal', lazy='dynamic')
 
 
 # 何かしらの処理の度にセッションにおけるユーザを再ロードするためのコールバック関数

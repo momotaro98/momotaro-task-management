@@ -5,7 +5,7 @@ import sys
 import os
 import logging
 from app import create_app, db
-from app.models import User, Role, Task
+from app.models import User, Role, Task, Goal
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 
@@ -20,7 +20,7 @@ app.logger.setLevel(logging.ERROR)
 
 # コマンドラインで実行する際にいちいちimportしないようにする処理
 def make_shell_context():
-    return dict(app=app, db=db, User=User, Role=Role, Task=Task)
+    return dict(app=app, db=db, User=User, Role=Role, Task=Task, Goal=Goal)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command("db", MigrateCommand)
 

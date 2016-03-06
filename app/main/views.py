@@ -1,6 +1,6 @@
-from flask import request, render_template, session, redirect, url_for, current_app, abort
+from flask import request, render_template, session, redirect, url_for, current_app, abort, flash
 from .. import db
-from ..models import User, Task
+from ..models import User, Task, Goal
 from . import main
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
@@ -18,6 +18,7 @@ class TaskInputForm(Form):
     minute = SelectField('分', choices=[(i, i) for i in min_list])
     submit = SubmitField('設定!')
 
+
 class DoneForm(Form):
     submit = SubmitField('DONE!')
     send_mail_or_not = SelectField(
@@ -29,6 +30,11 @@ class DoneForm(Form):
     Minutes = HiddenField('')
     remained_time = HiddenField('')
     serial_passed_time = HiddenField('')
+
+
+class GoalForm(Form):
+    goal_name = StringField('目標')
+    submit = SubmitField('送信！')
 
 
 @main.app_errorhandler(404)
@@ -116,6 +122,7 @@ def done_page():
         over_hour = over_time // 3600
         over_minute = (over_time % 3600) // 60
 
+        # タスク登録
         if current_user.is_authenticated:
             # Done Task Registration
             task = Task(task_title=task_title,
@@ -187,3 +194,17 @@ def user(username):
                            user=user,
                            tasks_localts=zip(tasks, localts),
                            pagination=pagination)
+
+@main.route('/setgoal', methods=['POST', 'GET'])
+def set_goal():
+    form = GoalForm()
+    if form.validate_on_submit():
+        goal = Goal(goal_name=form.goal_name.data,
+                    user=current_user._get_current_object())
+        db.session.add(goal)
+        db.session.commit()
+        flash('Your goal, "{0}", has been set'.format(form.goal_name.data))
+        return redirect(url_for('main.set_goal'))
+    user = User.query.filter_by(username=current_user.username).first_or_404()
+    goals = user.goals.order_by(Goal.timestamp.desc())
+    return render_template('set_goal.html', form=form, goals=goals)

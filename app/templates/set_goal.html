@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Set Goal{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>目標を入力してください<h1>
+</div>
+<div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+<ul>
+    <li>設定済みの目標</li>
+    <ul>
+        {% for goal in goals %}
+            <li>{{ goal.goal_name }}</li>
+        {% endfor %}
+    </ul>
+</ul>
+</div>
+{% endblock %}

@@ -9,16 +9,7 @@
     <p>Member since {{ user.member_since }}. Last seen {{ user.last_seen }}</p>
 </div>
 <h2>Your Done Tasks</h2>
-{% for task, localts in tasks_localts %}
-    <div class="view_task">
-        <p>タスク名: {{ task.task_title }}</p>
-        <p>タスク実行完了日時: {{ localts.year }}年{{ localts.month }}月{{ localts.day }}日 {{ localts.hour}}時{{ localts.minute }}分</p>
-        <p>設定時間: {{ task.set_time//3600 }}時間{{ task.set_time%3600//60}}分</p>
-        <p>残り時間: {{ task.remained_time//3600 }}時間{{ task.remained_time%3600//60 }}分</p>
-        <p>実行時間: {{ task.serial_passed_time//3600 }}時間{{ task.serial_passed_time%3600//60 }}分</p>
-        <!--<p>task.user_id: {{ task.user_id }}</p>-->
-    </div>
-{% endfor %}
+{% include '_posts.html' %}
 {% if pagination %}
 <div class="pagination">
     {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
