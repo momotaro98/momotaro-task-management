@@ -17,6 +17,7 @@ class TaskInputForm(Form):
     min_list = [0, 1, 3] + [i for i in range(5, 60 ,5)]
     minute = SelectField('分', choices=[(i, i) for i in min_list])
     submit = SubmitField('設定!')
+    goal_name = SelectField('目標')
 
 
 class DoneForm(Form):
@@ -49,6 +50,13 @@ def internal_server_error(e):
 @main.route('/', methods=['POST', 'GET'])
 def setting_page():
     form = TaskInputForm()
+    if current_user.is_authenticated:
+        user = User.query.filter_by(username=current_user.username).first_or_404()
+        goal_select = [''] + [ goal.goal_name \
+                    for goal in user.goals.order_by(Goal.timestamp.desc()) ]
+        form.goal_name.choices = [ (g, g) for g in goal_select]
+    else:
+        form.goal_name.choices = [('', '')]
     # タスク設定
     not_task_title = False
     not_set_time = False
@@ -57,10 +65,12 @@ def setting_page():
         task_title = request.form["task_title"]
         hour = request.form["hour"]
         minute = request.form["minute"]
+        goal_name = request.form["goal_name"]
         set_time = 3600 * int(hour) + 60 * int(minute)
         # session
         session["task_title"] = task_title
         session["set_time"] = set_time
+        session["goal_name"] = goal_name
 
         if not task_title and not set_time:
             not_task_title = True
@@ -103,6 +113,7 @@ def done_page():
     if request.method == 'POST':
         task_title = session["task_title"] # タスク名
         set_time = session["set_time"] # 設定時間
+        goal_name = session["goal_name"] # 目標名
 
         start_hour = int(request.form["Hours"]) # 開始時間 時
         start_minute = int(request.form["Minutes"]) # 開始時間 分
@@ -122,14 +133,20 @@ def done_page():
         over_hour = over_time // 3600
         over_minute = (over_time % 3600) // 60
 
-        # タスク登録
+
         if current_user.is_authenticated:
-            # Done Task Registration
+            # 目標rowオブジェクト取得
+            user = User.query.filter_by(username=current_user.username).first_or_404()
+            goal = user.goals.filter_by(goal_name=goal_name).first()
+
+            # 実行タスク登録
             task = Task(task_title=task_title,
                         set_time=set_time,
                         remained_time=remained_time,
                         serial_passed_time=serial_passed_time,
-                        user=current_user._get_current_object())
+                        user=current_user._get_current_object(),
+                        goal=goal,
+                        )
             db.session.add(task)
 
         # Mail Sending
@@ -189,10 +206,11 @@ def user(username):
 
     # localtsは国・地域ごとに異なる変数とする
     # 日本はhours=9
-    localts = ( task.timestamp + datetime.timedelta(hours=9) for task in tasks)
+    localts = ( task.timestamp + datetime.timedelta(hours=9) for task in tasks )
+    goals = ( Goal.query.filter_by(id=task.goal_id).first() for task in tasks )
     return render_template('user.html',
                            user=user,
-                           tasks_localts=zip(tasks, localts),
+                           tasks_localts_goals=zip(tasks, localts, goals),
                            pagination=pagination)
 
 @main.route('/setgoal', methods=['POST', 'GET'])
