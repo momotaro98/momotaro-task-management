@@ -1,5 +1,10 @@
 {% for task, localts, goal in tasks_localts_goals %}
     <div class="view_task">
+        <div class="edit_mark">
+            <a href="{{ url_for('.edit_task', id=task.id) }}">
+                <span class="label label-default">編集</span>
+            </a>
+        </div>
         <p>タスク名: {{ task.task_title }}</p>
         <p>目標: {{ goal.goal_name }}</p>
         <p>タスク実行完了日時: {{ localts.year }}年{{ localts.month }}月{{ localts.day }}日 {{ localts.hour}}時{{ localts.minute }}分</p>
@@ -7,8 +12,5 @@
         <p>残り時間: {{ task.remained_time//3600 }}時間{{ task.remained_time%3600//60 }}分</p>
         <p>実行時間: {{ task.serial_passed_time//3600 }}時間{{ task.serial_passed_time%3600//60 }}分</p>
         <!--<p>task.user_id: {{ task.user_id }}</p>-->
-        <a href="{{ url_for('.edit_task', id=task.id) }}">
-            <span class="label label-default">Permalink</span>
-        </a>
     </div>
 {% endfor %}

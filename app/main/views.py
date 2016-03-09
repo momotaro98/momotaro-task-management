@@ -8,7 +8,7 @@ from flask.ext.login import current_user, login_required
 import datetime
 
 from . import main
-from ..email import send_email # emailディレクトリは作成予定
+from ..email import send_email
 
 
 class TaskInputForm(Form):
@@ -20,7 +20,7 @@ class TaskInputForm(Form):
     goal_name = SelectField('目標')
 
 class TaskEditForm(Form):
-    task_title = StringField('タスク名: ')
+    task_name = StringField('タスク名: ')
     serial_passed_hour = SelectField('実行時間(時間)', coerce=int, choices=[(i, i) for i in range(0, 6)])
     min_list = [0, 1, 3] + [i for i in range(5, 60 ,5)]
     serial_passed_minute = SelectField('実行時間(分)', coerce=int, choices=[(i, i) for i in min_list])
@@ -250,16 +250,14 @@ def edit_task(id):
         form.goal_name.choices = [('', '')]
 
     if form.validate_on_submit():
-        task.task_title = form.task_title.data
+        task.task_title = form.task_name.data
         task.serial_passed_time = int(form.serial_passed_hour.data) * 3600 +\
                         int(form.serial_passed_minute.data) * 60
-        # user = User.query.filter_by(username=current_user.username).first_or_404()
-        # task.goal_id = user.goals.filter_by(goal_name=form.goal_name.data).first().id
         task.goal_id = current_user.goals.filter_by(goal_name=form.goal_name.data).first().id
         db.session.add(task)
         flash('The task has been changed.')
         return redirect(url_for('.user', username=current_user.username))
-    form.task_title.data = task.task_title
+    form.task_name.data = task.task_title
     form.serial_passed_hour.data = task.serial_passed_time // 3600
     form.serial_passed_minute.data = (task.serial_passed_time%3600)//60
     # 空の目標のとき対応

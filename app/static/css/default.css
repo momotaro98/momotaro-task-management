@@ -145,3 +145,8 @@ div.pagination {
 #done_elements h2{
     color: #000;
 }
+
+.edit_mark {
+    width: 15%;
+   margin-left: auto;
+}
