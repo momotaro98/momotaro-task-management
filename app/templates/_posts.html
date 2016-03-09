@@ -7,5 +7,8 @@
         <p>残り時間: {{ task.remained_time//3600 }}時間{{ task.remained_time%3600//60 }}分</p>
         <p>実行時間: {{ task.serial_passed_time//3600 }}時間{{ task.serial_passed_time%3600//60 }}分</p>
         <!--<p>task.user_id: {{ task.user_id }}</p>-->
+        <a href="{{ url_for('.edit_task', id=task.id) }}">
+            <span class="label label-default">Permalink</span>
+        </a>
     </div>
 {% endfor %}

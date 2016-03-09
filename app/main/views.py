@@ -4,7 +4,7 @@ from ..models import User, Task, Goal
 from . import main
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField, validators
-from flask.ext.login import current_user
+from flask.ext.login import current_user, login_required
 import datetime
 
 from . import main
@@ -19,6 +19,13 @@ class TaskInputForm(Form):
     submit = SubmitField('設定!')
     goal_name = SelectField('目標')
 
+class TaskEditForm(Form):
+    task_title = StringField('タスク名: ')
+    serial_passed_hour = SelectField('実行時間(時間)', coerce=int, choices=[(i, i) for i in range(0, 6)])
+    min_list = [0, 1, 3] + [i for i in range(5, 60 ,5)]
+    serial_passed_minute = SelectField('実行時間(分)', coerce=int, choices=[(i, i) for i in min_list])
+    goal_name = SelectField('目標')
+    submit = SubmitField('変更！')
 
 class DoneForm(Form):
     submit = SubmitField('DONE!')
@@ -136,8 +143,7 @@ def done_page():
 
         if current_user.is_authenticated:
             # 目標rowオブジェクト取得
-            user = User.query.filter_by(username=current_user.username).first_or_404()
-            goal = user.goals.filter_by(goal_name=goal_name).first()
+            goal = current_user.goals.filter_by(goal_name=goal_name).first()
 
             # 実行タスク登録
             task = Task(task_title=task_title,
@@ -223,6 +229,42 @@ def set_goal():
         db.session.commit()
         flash('Your goal, "{0}", has been set'.format(form.goal_name.data))
         return redirect(url_for('main.set_goal'))
-    user = User.query.filter_by(username=current_user.username).first_or_404()
-    goals = user.goals.order_by(Goal.timestamp.desc())
+    goals = current_user.goals.order_by(Goal.timestamp.desc())
     return render_template('set_goal.html', form=form, goals=goals)
+
+
+@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_task(id):
+    task = Task.query.get_or_404(id)
+    if current_user != task.user:
+        abort(403)
+
+    form = TaskEditForm()
+    if current_user.is_authenticated:
+        user = User.query.filter_by(username=current_user.username).first_or_404()
+        goal_select = [''] + [ goal.goal_name \
+                    for goal in user.goals.order_by(Goal.timestamp.desc()) ]
+        form.goal_name.choices = [ (g, g) for g in goal_select]
+    else:
+        form.goal_name.choices = [('', '')]
+
+    if form.validate_on_submit():
+        task.task_title = form.task_title.data
+        task.serial_passed_time = int(form.serial_passed_hour.data) * 3600 +\
+                        int(form.serial_passed_minute.data) * 60
+        # user = User.query.filter_by(username=current_user.username).first_or_404()
+        # task.goal_id = user.goals.filter_by(goal_name=form.goal_name.data).first().id
+        task.goal_id = current_user.goals.filter_by(goal_name=form.goal_name.data).first().id
+        db.session.add(task)
+        flash('The task has been changed.')
+        return redirect(url_for('.user', username=current_user.username))
+    form.task_title.data = task.task_title
+    form.serial_passed_hour.data = task.serial_passed_time // 3600
+    form.serial_passed_minute.data = (task.serial_passed_time%3600)//60
+    # 空の目標のとき対応
+    try:
+        form.goal_name.data = Goal.query.filter_by(id=task.goal_id).first().goal_name
+    except AttributeError:
+        form.goal_name.data = ''
+    return render_template('edit_task.html', form=form)
