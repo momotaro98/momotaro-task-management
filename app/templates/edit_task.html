@@ -9,5 +9,10 @@
 </div>
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
+    <div class="edit_mark">
+        <a href="{{ url_for('.delete_task', id=id) }}">
+            <span class="label label-default">削除</span>
+        </a>
+    </div>
 </div>
 {% endblock %}

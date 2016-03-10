@@ -5,6 +5,7 @@ venv
 *.swp
 .python-version
 *.sqlite
+*.sqlite-journal
 
 ### https://raw.github.com/github/gitignore/7e854d39915457f55afe9886daeef4b2a35dc772/python.gitignore
 

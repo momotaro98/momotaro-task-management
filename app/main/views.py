@@ -219,6 +219,7 @@ def user(username):
                            tasks_localts_goals=zip(tasks, localts, goals),
                            pagination=pagination)
 
+
 @main.route('/setgoal', methods=['POST', 'GET'])
 def set_goal():
     form = GoalForm()
@@ -255,7 +256,7 @@ def edit_task(id):
                         int(form.serial_passed_minute.data) * 60
         task.goal_id = current_user.goals.filter_by(goal_name=form.goal_name.data).first().id
         db.session.add(task)
-        flash('The task has been changed.')
+        flash('The task was changed.')
         return redirect(url_for('.user', username=current_user.username))
     form.task_name.data = task.task_title
     form.serial_passed_hour.data = task.serial_passed_time // 3600
@@ -265,4 +266,24 @@ def edit_task(id):
         form.goal_name.data = Goal.query.filter_by(id=task.goal_id).first().goal_name
     except AttributeError:
         form.goal_name.data = ''
-    return render_template('edit_task.html', form=form)
+    return render_template('edit_task.html', form=form, id=id)
+
+
+@main.route('/deletetask/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_task(id):
+    task = Task.query.get_or_404(id)
+    if current_user != task.user:
+        abort(403)
+
+    '''
+    # TODO: タスク削除はhtmlでinputにして確認機能にする
+    if request.method == 'POST':
+        Task.query.filter_by(id=id).delete()
+        flash('The task was deleted.')
+        return redirect(url_for('.user', username=current_user.username))
+    '''
+
+    Task.query.filter_by(id=id).delete()
+    flash('The task was deleted.')
+    return redirect(url_for('.user', username=current_user.username))
