@@ -27,6 +27,18 @@ class TaskEditForm(Form):
     goal_name = SelectField('目標')
     submit = SubmitField('変更！')
 
+    @classmethod
+    def dynamize_goal_select(cls):
+        form = TaskEditForm()
+        if current_user.is_authenticated:
+            user = User.query.filter_by(username=current_user.username).first_or_404()
+            goal_select = [''] + [ goal.goal_name \
+                        for goal in user.goals.order_by(Goal.timestamp.desc()) ]
+            form.goal_name.choices = [ (g, g) for g in goal_select]
+        else:
+            form.goal_name.choices = [('', '')]
+        return form
+
 class DoneForm(Form):
     submit = SubmitField('DONE!')
     send_mail_or_not = SelectField(
@@ -260,8 +272,13 @@ def delete_goal(id):
         abort(403)
 
     if request.method == 'POST':
-        Goal.query.filter_by(id=id).delete()
-        flash('The goal was deleted.')
+        '''If the goal has no binded tasks,
+        `goal.tasks.first()` returns None type object'''
+        if not goal.tasks.first(): # 関連するタスクが無いとき
+            Goal.query.filter_by(id=id).delete()
+            flash('The goal was deleted.')
+        else:
+            flash('削除しようとした目標に関連づけられたタスクが存在するため削除できません')
         return redirect(url_for('.set_goal'))
 
     return redirect(url_for('.set_goal'))
@@ -274,15 +291,7 @@ def edit_task(id):
     if current_user != task.user:
         abort(403)
 
-    form = TaskEditForm()
-    if current_user.is_authenticated:
-        user = User.query.filter_by(username=current_user.username).first_or_404()
-        goal_select = [''] + [ goal.goal_name \
-                    for goal in user.goals.order_by(Goal.timestamp.desc()) ]
-        form.goal_name.choices = [ (g, g) for g in goal_select]
-    else:
-        form.goal_name.choices = [('', '')]
-
+    form = TaskEditForm.dynamize_goal_select()
     if form.validate_on_submit():
         task.task_title = form.task_name.data
         task.serial_passed_time = int(form.serial_passed_hour.data) * 3600 +\
@@ -291,10 +300,12 @@ def edit_task(id):
         db.session.add(task)
         flash('The task was changed.')
         return redirect(url_for('.user', username=current_user.username))
+
     # 既設定表示
     form.task_name.data = task.task_title
     form.serial_passed_hour.data = task.serial_passed_time // 3600
     form.serial_passed_minute.data = (task.serial_passed_time%3600)//60
+
     # 空の目標のとき対応
     try:
         form.goal_name.data = Goal.query.filter_by(id=task.goal_id).first().goal_name
@@ -306,17 +317,7 @@ def edit_task(id):
 @main.route('/addtask', methods=['GET', 'POST'])
 @login_required
 def addtask():
-    """関数化した方がよい satrt"""
-    """関数名 make_task_formとか?"""
-    form = TaskEditForm()
-    if current_user.is_authenticated:
-        user = User.query.filter_by(username=current_user.username).first_or_404()
-        goal_select = [''] + [ goal.goal_name \
-                    for goal in user.goals.order_by(Goal.timestamp.desc()) ]
-        form.goal_name.choices = [ (g, g) for g in goal_select]
-    else:
-        form.goal_name.choices = [('', '')]
-    """関数化した方がよい end"""
+    form = TaskEditForm.dynamize_goal_select()
 
     if form.validate_on_submit():
         task = Task(\
@@ -348,5 +349,3 @@ def delete_task(id):
         return redirect(url_for('.user', username=current_user.username))
 
     return redirect(url_for('.user', username=current_user.username))
-
-
