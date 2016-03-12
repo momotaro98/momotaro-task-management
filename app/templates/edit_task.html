@@ -10,9 +10,19 @@
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
     <div class="edit_mark">
-        <a href="{{ url_for('.delete_task', id=id) }}">
-            <span class="label label-default">削除</span>
-        </a>
+        <form action="/deletetask/{{ id }}" method="post" class="form-inline" onSubmit="return check()">
+            <input type="submit" value="削除">
+        </form>
     </div>
 </div>
+<script>
+    function check(){
+        if(window.confirm('本当にこのタスク削除してもよろしいですか？')){ // 確認ダイアログを表示
+            return true; // 「OK」時は送信を実行
+        }
+        else{ // 「キャンセル」時の処理
+            return false; // 送信を中止
+        }
+    }
+</script>
 {% endblock %}

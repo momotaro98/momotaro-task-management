@@ -276,14 +276,10 @@ def delete_task(id):
     if current_user != task.user:
         abort(403)
 
-    '''
     # TODO: タスク削除はhtmlでinputにして確認機能にする
     if request.method == 'POST':
         Task.query.filter_by(id=id).delete()
         flash('The task was deleted.')
         return redirect(url_for('.user', username=current_user.username))
-    '''
 
-    Task.query.filter_by(id=id).delete()
-    flash('The task was deleted.')
     return redirect(url_for('.user', username=current_user.username))
