@@ -9,6 +9,11 @@
     <p>Member since {{ user.member_since }}. Last seen {{ user.last_seen }}</p>
 </div>
 <h2>Your Done Tasks</h2>
+<h3 style="text-align:center">
+    <a href="{{ url_for('.addtask') }}">
+        <span class="label label-default">実行済タスク追加</span>
+    </a>
+</h3>
 {% include '_posts.html' %}
 {% if pagination %}
 <div class="pagination">

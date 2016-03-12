@@ -258,6 +258,7 @@ def edit_task(id):
         db.session.add(task)
         flash('The task was changed.')
         return redirect(url_for('.user', username=current_user.username))
+    # 既設定表示
     form.task_name.data = task.task_title
     form.serial_passed_hour.data = task.serial_passed_time // 3600
     form.serial_passed_minute.data = (task.serial_passed_time%3600)//60
@@ -267,6 +268,38 @@ def edit_task(id):
     except AttributeError:
         form.goal_name.data = ''
     return render_template('edit_task.html', form=form, id=id)
+
+
+@main.route('/addtask', methods=['GET', 'POST'])
+@login_required
+def addtask():
+    """関数化した方がよい satrt"""
+    """関数名 make_task_formとか?"""
+    form = TaskEditForm()
+    if current_user.is_authenticated:
+        user = User.query.filter_by(username=current_user.username).first_or_404()
+        goal_select = [''] + [ goal.goal_name \
+                    for goal in user.goals.order_by(Goal.timestamp.desc()) ]
+        form.goal_name.choices = [ (g, g) for g in goal_select]
+    else:
+        form.goal_name.choices = [('', '')]
+    """関数化した方がよい end"""
+
+    if form.validate_on_submit():
+        task = Task(\
+                task_title=form.task_name.data,
+                set_time=0,
+                remained_time=0,
+                serial_passed_time = int(form.serial_passed_hour.data) * 3600 +\
+                    int(form.serial_passed_minute.data) * 60,
+                user=current_user._get_current_object(),
+                goal_id = current_user.goals.filter_by(goal_name=form.goal_name.data).first().id,
+                   )
+        db.session.add(task)
+        flash('Your done task ,{0}, was added.'.format(form.task_name.data))
+        return redirect(url_for('.user', username=current_user.username))
+
+    return render_template('task_add.html', form=form)
 
 
 @main.route('/deletetask/<int:id>', methods=['GET', 'POST'])
@@ -283,3 +316,5 @@ def delete_task(id):
         return redirect(url_for('.user', username=current_user.username))
 
     return redirect(url_for('.user', username=current_user.username))
+
+
