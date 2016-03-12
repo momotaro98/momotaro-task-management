@@ -37,6 +37,11 @@
         <h2 style="color: black">目標:
             {{ form.goal_name }}
         </h2>
+        {% if not current_user.is_authenticated %}
+            <p style="text-align:center; color: black">
+                注: 目標設定機能はログイン時のみ有効です
+            </p>
+        {% endif %}
         <h2>
             {{ form.submit(id='submit_button') }}
         </h2>

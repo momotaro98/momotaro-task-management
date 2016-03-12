@@ -234,7 +234,40 @@ def set_goal():
     return render_template('set_goal.html', form=form, goals=goals)
 
 
-@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@main.route('/editgoal/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_goal(id):
+    goal = Goal.query.get_or_404(id)
+    if current_user != goal.user:
+        abort(403)
+
+    form = GoalForm()
+    if form.validate_on_submit():
+        goal.goal_name = form.goal_name.data
+        db.session.add(goal)
+        db.session.commit()
+        flash('Your goal name was fixed'.format(form.goal_name.data))
+        return redirect(url_for('.set_goal'))
+    form.goal_name.data = goal.goal_name
+    return render_template('edit_goal.html', form=form, id=id)
+
+
+@main.route('/deletegoal/<int:id>', methods=['GET', 'POST'])
+@login_required
+def delete_goal(id):
+    goal = Goal.query.get_or_404(id)
+    if current_user != goal.user:
+        abort(403)
+
+    if request.method == 'POST':
+        Goal.query.filter_by(id=id).delete()
+        flash('The goal was deleted.')
+        return redirect(url_for('.set_goal'))
+
+    return redirect(url_for('.set_goal'))
+
+
+@main.route('/edittask/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_task(id):
     task = Task.query.get_or_404(id)
@@ -309,7 +342,6 @@ def delete_task(id):
     if current_user != task.user:
         abort(403)
 
-    # TODO: タスク削除はhtmlでinputにして確認機能にする
     if request.method == 'POST':
         Task.query.filter_by(id=id).delete()
         flash('The task was deleted.')

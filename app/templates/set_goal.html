@@ -10,11 +10,20 @@
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
 <ul>
+    {% if goals[0] %}
     <li>設定済みの目標</li>
     <ul>
         {% for goal in goals %}
-            <li>{{ goal.goal_name }}</li>
+        <li>{{ goal.goal_name }}
+            <a href="{{ url_for('.edit_goal', id=goal.id) }}">
+                <span class="label label-default">編集</span>
+            </a>
+        </li>
+        <br>
         {% endfor %}
+    {% else %}
+    <li>目標を設定してください</li>
+    {% endif %}
     </ul>
 </ul>
 </div>
