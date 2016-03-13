@@ -8,16 +8,16 @@
     <h1>Edit Task<h1>
 </div>
 <div class="col-md-4">
-    {{ wtf.quick_form(form) }}
     <div class="edit_mark">
         <form action="/deletetask/{{ id }}" method="post" class="form-inline" onSubmit="return check()">
             <input type="submit" value="削除">
         </form>
     </div>
+    {{ wtf.quick_form(form) }}
 </div>
 <script>
     function check(){
-        if(window.confirm('本当にこのタスク削除してもよろしいですか？')){ // 確認ダイアログを表示
+        if(window.confirm('本当にこの実行タスクを削除してもよろしいですか？')){ // 確認ダイアログを表示
             return true; // 「OK」時は送信を実行
         }
         else{ // 「キャンセル」時の処理

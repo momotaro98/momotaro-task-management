@@ -296,7 +296,9 @@ def edit_task(id):
         task.task_title = form.task_name.data
         task.serial_passed_time = int(form.serial_passed_hour.data) * 3600 +\
                         int(form.serial_passed_minute.data) * 60
-        task.goal_id = current_user.goals.filter_by(goal_name=form.goal_name.data).first().id
+        # 空の目標の場合NoneTypeがgoalに入る
+        # TODO: データベース上ではNULLになっている？
+        task.goal = current_user.goals.filter_by(goal_name=form.goal_name.data).first()
         db.session.add(task)
         flash('The task was changed.')
         return redirect(url_for('.user', username=current_user.username))
@@ -327,7 +329,7 @@ def addtask():
                 serial_passed_time = int(form.serial_passed_hour.data) * 3600 +\
                     int(form.serial_passed_minute.data) * 60,
                 user=current_user._get_current_object(),
-                goal_id = current_user.goals.filter_by(goal_name=form.goal_name.data).first().id,
+                goal=current_user.goals.filter_by(goal_name=form.goal_name.data).first()
                    )
         db.session.add(task)
         flash('Your done task ,{0}, was added.'.format(form.task_name.data))

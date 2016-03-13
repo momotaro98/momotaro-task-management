@@ -8,12 +8,12 @@
     <h1>Edit Goal<h1>
 </div>
 <div class="col-md-4">
-    {{ wtf.quick_form(form) }}
     <div class="edit_mark">
         <form action="/deletegoal/{{ id }}" method="post" class="form-inline" onSubmit="return check()">
             <input type="submit" value="削除">
         </form>
     </div>
+    {{ wtf.quick_form(form) }}
 </div>
 <script>
     function check(){
