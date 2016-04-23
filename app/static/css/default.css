@@ -25,7 +25,7 @@ body {
 #org_container {
      min-height: 100%;
      height: 100%;
-     width: 80%;
+     width: 95%;
      margin: 0 auto;
      overflow: hidden;
      background-color: #ddd;
@@ -50,16 +50,6 @@ input#submit_button {
         opacity: 0.8;
     }
 #header{
-}
-#side{
-    float: left;
-    width: 30%;
-    /*width: 300px*/
-}
-#main{
-    float: right;
-    width: 65%;
-    /*margin-left: 310px;*/
 }
 #Button_set {
     clear: right;
