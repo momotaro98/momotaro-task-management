@@ -15,8 +15,17 @@
             <h2>タスク実行管理アプリ</h2>
         </div>
     </div>
-    <h2 style="color: #000">これは時間制限を設けて効率よく作業をこなすためのアプリです</h2>
-    <h2 style="color: #000">タスク名と設定時間を決定し"設定！"をクリックorタップしてください</h2>
+    {% if not current_user.is_authenticated %}
+    <h2 style="color: #000">
+        これは時間制限を設けて作業をこなすためのアプリです
+    </h2>
+    <h2 style="color: #000">
+        登録・ログインするとタスク記録や目標設定機能などが利用できます
+    </h2>
+    {% endif %}
+    <h2 style="color: #000">
+        タスク名と設定時間を決定し"設定！"を選択してください
+    </h2>
 
     {% if not_task_title and not_set_time %}
     <div id="task_title"><h2>タスク名と設定時間を決めてください</h2></div>
@@ -31,12 +40,14 @@
             {{ form.hidden_tag() }}
             {{ form.task_title.label }}{{ form.task_title(value=set_task_title, id='title_input') }}
         </h2>
-        <h2 style="color: black">設定時間:
+        <h2 style="color: black">
+            設定時間
+        </h2>
+        <div style="text-align: center; color: black; font-size:28px; font-weight:bold;">
             {{ form.hour }} 時間 {{ form.minute }} 分
-        </h2>
-        <h2 style="color: black">目標:
-            {{ form.goal_name }}
-        </h2>
+        </div>
+        <h2 style="color: black">目標</h2>
+        <div style="text-align: center;"> {{ form.goal_name }} </div>
         {% if not current_user.is_authenticated %}
             <p style="text-align:center; color: black">
                 注: 目標設定機能はログイン時のみ有効です
