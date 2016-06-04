@@ -72,7 +72,8 @@ def setting_page():
     if current_user.is_authenticated:
         user = User.query.filter_by(username=current_user.username).first_or_404()
         goal_select = [''] + [ goal.goal_name \
-                    for goal in user.goals.order_by(Goal.timestamp.desc()) ]
+                    for goal in user.goals.order_by(Goal.timestamp.desc()) \
+                    if not goal.achieved]
         form.goal_name.choices = [ (g, g) for g in goal_select]
     else:
         form.goal_name.choices = [('', '')]
@@ -242,8 +243,13 @@ def set_goal():
         db.session.commit()
         flash('Your goal, "{0}", has been set'.format(form.goal_name.data))
         return redirect(url_for('main.set_goal'))
+
     goals = current_user.goals.order_by(Goal.timestamp.desc())
-    return render_template('set_goal.html', form=form, goals=goals)
+    achieved_goals = [goal for goal in goals if goal.achieved]
+    not_achieved_goals = [goal for goal in goals if not goal.achieved]
+    return render_template('set_goal.html', form=form,
+                            achieved_goals=achieved_goals,
+                            not_achieved_goals=not_achieved_goals)
 
 
 @main.route('/editgoal/<int:id>', methods=['GET', 'POST'])
@@ -261,7 +267,8 @@ def edit_goal(id):
         flash('Your goal name was fixed'.format(form.goal_name.data))
         return redirect(url_for('.set_goal'))
     form.goal_name.data = goal.goal_name
-    return render_template('edit_goal.html', form=form, id=id)
+    achieved = goal.achieved
+    return render_template('edit_goal.html', form=form, id=id, achieved=achieved)
 
 
 @main.route('/achievegoal/<int:id>', methods=['GET', 'POST'])
@@ -273,7 +280,22 @@ def achieve_goal(id):
 
     if request.method == 'POST':
         goal.set_achieved()
-        flash('Congratulation! Your goal, "{0}" has been achieved.')
+        flash('Congratulation! Your goal, "{0}" has been achieved.'.format(goal.get_goal_name()))
+        return redirect(url_for('.set_goal'))
+
+    return redirect(url_for('.set_goal'))
+
+
+@main.route('/unachievegoal/<int:id>', methods=['GET', 'POST'])
+@login_required
+def unachieve_goal(id):
+    goal = Goal.query.get_or_404(id)
+    if current_user != goal.user:
+        abort(403)
+
+    if request.method == 'POST':
+        goal.restore_tonot_achived()
+        flash('Your goal, "{0}" was set to "not achieved yet".'.format(goal.get_goal_name()))
         return redirect(url_for('.set_goal'))
 
     return redirect(url_for('.set_goal'))

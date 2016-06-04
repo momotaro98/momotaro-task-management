@@ -15,9 +15,15 @@
     </div>
     {{ wtf.quick_form(form) }}
     <div class="edit_mark">
+        {% if not achieved %}
         <form action="/achievegoal/{{ id }}" method="post" class="form-inline">
-            <input type="submit" value="達成済">
+            <input type="submit" value="達成!">
         </form>
+        {% else %}
+        <form action="/unachievegoal/{{ id }}" method="post" class="form-inline">
+            <input type="submit" value="未達成に戻す">
+        </form>
+        {% endif %}
     </div>
 </div>
 <script>

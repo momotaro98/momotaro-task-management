@@ -93,6 +93,10 @@ class Goal(db.Model):
     tasks = db.relationship('Task', backref='goal', lazy='dynamic')
 
     # TODO: need to use property?
+    def get_goal_name(self):
+        return str(self.goal_name)
+
+    # TODO: need to use property?
     def set_achieved(self):
         self.achieved = True
 

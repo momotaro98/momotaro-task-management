@@ -10,21 +10,34 @@
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
 <ul>
-    {% if goals[0] %}
-    <li>設定済みの目標</li>
+    {% if not_achieved_goals[0] or achieved_goals[0] %}
+    <li>設定した目標</li>
     <ul>
-        {% for goal in goals %}
-        <li>{{ goal.goal_name }}
-            <a href="{{ url_for('.edit_goal', id=goal.id) }}">
+        {% for ng in not_achieved_goals %}
+        <li>{{ ng.goal_name }}
+            <a href="{{ url_for('.edit_goal', id=ng.id) }}">
                 <span class="label label-default">編集</span>
             </a>
         </li>
         <br>
         {% endfor %}
-    {% else %}
-    <li>目標を設定してください</li>
-    {% endif %}
     </ul>
+    <li>達成済みの目標</li>
+    <ul>
+        {% for ag in achieved_goals %}
+        <li>{{ ag.goal_name }}
+            <a href="{{ url_for('.edit_goal', id=ag.id) }}">
+                <span class="label label-default">編集</span>
+            </a>
+        </li>
+        <br>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <ul>
+        <li>目標を設定してください</li>
+    </ul>
+    {% endif %}
 </ul>
 </div>
 {% endblock %}
