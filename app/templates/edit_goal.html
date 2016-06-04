@@ -14,6 +14,11 @@
         </form>
     </div>
     {{ wtf.quick_form(form) }}
+    <div class="edit_mark">
+        <form action="/achievegoal/{{ id }}" method="post" class="form-inline">
+            <input type="submit" value="達成済">
+        </form>
+    </div>
 </div>
 <script>
     function check(){

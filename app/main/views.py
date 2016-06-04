@@ -264,6 +264,21 @@ def edit_goal(id):
     return render_template('edit_goal.html', form=form, id=id)
 
 
+@main.route('/achievegoal/<int:id>', methods=['GET', 'POST'])
+@login_required
+def achieve_goal(id):
+    goal = Goal.query.get_or_404(id)
+    if current_user != goal.user:
+        abort(403)
+
+    if request.method == 'POST':
+        goal.set_achieved()
+        flash('Congratulation! Your goal, "{0}" has been achieved.')
+        return redirect(url_for('.set_goal'))
+
+    return redirect(url_for('.set_goal'))
+
+
 @main.route('/deletegoal/<int:id>', methods=['GET', 'POST'])
 @login_required
 def delete_goal(id):

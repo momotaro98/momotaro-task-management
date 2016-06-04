@@ -88,8 +88,17 @@ class Goal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     goal_name = db.Column(db.String(64))
+    achieved = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     tasks = db.relationship('Task', backref='goal', lazy='dynamic')
+
+    # TODO: need to use property?
+    def set_achieved(self):
+        self.achieved = True
+
+    # TODO: need to use property?
+    def restore_tonot_achived(self):
+        self.achieved = False
 
 
 # 何かしらの処理の度にセッションにおけるユーザを再ロードするためのコールバック関数
