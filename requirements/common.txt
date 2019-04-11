@@ -1,7 +1,7 @@
 alembic==0.8.4
 blinker==1.4
 dominate==2.1.12
-Flask==0.10.1
+Flask>=0.12.3
 Flask-Bootstrap==3.3.5.7
 Flask-Login==0.3.2
 Flask-Mail==0.9.1
